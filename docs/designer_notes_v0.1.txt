@@ -1,0 +1,83 @@
+Fishing For Islands — Build v0.1
+=================================
+April 2026
+
+Play here: https://kkawahata.github.io/fishingforislands/
+Open in Chrome or Firefox on desktop. Nothing to install.
+
+
+HOW TO PLAY
+-----------
+- Click ground to move, click NPCs/objects to interact
+- WASD works too
+- Right-drag to orbit camera, scroll to zoom, V to reset view
+- E to interact, C to craft near a station
+- Space to advance dialogue
+
+
+DEV TOOLS (for testing)
+-----------------------
+Press the backtick key (`) to open the dev tools panel:
+- Skip to any day
+- Add items, unlock all islands, give yourself tools
+- Makes it easy to jump ahead without replaying from Day 1
+
+
+WHAT'S IMPLEMENTED
+------------------
+All 15 islands from the April spec, playable through Day 9+:
+
+  Tier 1 (FTUE - Days 1-4):
+  - Your Home: fire, crafting table, fishing rod, bed, house quests
+  - Wheat Farm: dog fetch, shovel, magic wand, planting, harvest
+  - Sheep Pasture: Sally, shearing, beds, fence building, sheep pregnancy
+  - Fishing Pier: Maria, Old Man, fishing rod, cooking, fish catalogue
+
+  Tier 2 (Early Game - Days 5-8):
+  - Bakery: Pierre, mouse chase (5 islands), welcome dinner, cellar (Flame Stone)
+  - Dense Forest: Ashley, squirrel, logging camp, 100 acorns, winter event (Frost Stone)
+  - Rocks: Timmy, seals, pristine shells, pearl requests, hidden quest (Shadow Stone)
+  - Granary: Raven, crow, windmill, wheat-to-grain, repair quest
+  - Market Square: 3 merchants, coins economy, daily requests
+
+  Stubs (Days 6-9+):
+  - Mermaid Cove / Faerie Woods (exclusive pair)
+  - Auction House, Gold Mine, Mount Mystery
+  - Each has Quest 1 playable
+
+Game Systems:
+- 6 fish types with day-parity probability (snapper odd days, tuna even, etc.)
+- Max 10 fish per day
+- Prerequisite-based island unlocks (day + required islands)
+- Exclusive choice pairs: Sheep/Pier (Day 3/4), Mermaid/Faerie
+- Multi-day quests (sheep pregnancy, Theodore's requests, pearl requests)
+- Mouse chase (moves to farthest island when caught)
+- Winter event (snow cosmetics + snowman + Frost Stone)
+- Hidden quest (3 Golden Trout -> Shadow Stone)
+- 13 crafting recipes across 5 stations
+- Magic Wand as catalyst for wood tier conversions
+- Coins economy (buy/sell at Market Square)
+- 5 magical stones collectible for endgame
+- Auto-save each day in browser storage
+
+
+WHAT'S PLACEHOLDER
+------------------
+- All art is colored 3D blocks (no real models or textures yet)
+- Dialogue is minimal (vibes, not full scripts)
+- No sound or music
+- Economy has no real balancing (1:1 placeholder prices)
+- Stub islands have only Quest 1
+- No tree growth visuals yet (Dense Forest)
+- Acorn island effect not spawning across islands yet
+
+
+LOOKING FOR FEEDBACK ON
+-----------------------
+- Does the core loop feel right? (New island each day -> quest -> turtle)
+- Quest pacing: too fast? too slow? enough to do each day?
+- Which islands/quests are most engaging?
+- Island prerequisite order: does the progression make sense?
+- Economy: what should things cost once we balance?
+- Anything confusing, broken, or missing from the spec?
+- What should we prioritize for v0.2?
