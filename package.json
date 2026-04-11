@@ -12,7 +12,6 @@
     "three": "^0.170.0"
   },
   "devDependencies": {
-    "serve": "^14.2.6",
     "vite": "^6.0.0"
   }
 }
