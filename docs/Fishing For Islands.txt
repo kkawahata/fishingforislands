@@ -1,0 +1,1256 @@
+﻿Fishing For Islands
+Fishing For Islands
+A roguelike farming sim with charm and mystery
+NOTE: There’s been an update! Check out this link to open the right tab:
+Changes, April 8, 2026
+
+
+Copyright 2026 Stephen Hilber. All Rights Reserved.
+Introduction
+Overview
+Why Will This Game Win?
+Core Game Mechanics
+Old Man (New Chunks)
+Flotsam (Daily Materials)
+Tools (TBD)
+Chunk Order
+Early Game Chunks
+Camp (Your Home)
+Wheat Farm
+Sheep Pasture
+Bakery
+Dense Forest
+Granary
+Cornfield
+Fishing Pier
+Rocks (TODO)
+Market Square (TODO)
+
+
+Introduction
+The protagonist is sailing across the sea on the back of a turtle. All is ocean.
+
+
+  
+
+
+
+
+
+As they sail, the protagonist thinks he sees a fish moving underneath. Time for the fishing rod!
+
+
+  
+
+
+
+
+
+Suddenly, there’s a massive lurch. The fishing rod has pulled up an entire island from the depths!
+
+
+  
+
+
+
+Overview
+Fishing For Islands is a farming sim where you build your farm by pulling up Chunks of Land from the sea and adding them to your island. Unlike other farming games, the Chunks you discover will be different for each run, adding a roguelike component to the gameplay. While each Chunk has a standalone purpose (e.g. Wheat Farm, Sheep Grazing, Mine, Market), economic synergies exist for many combinations of Chunks (Sheep eat Wheat, gems from the Mine can be sold at Market, etc.). Players will (literally) build out their island over time, discovering new Chunks and new economic synergies as they play the game.
+
+
+  
+  
+
+Left: Example of an early island. The player has discovered 7 Chunks, and has few synergies yet.
+Right: Example of a midgame island. The player has discovered 21 Chunks, with several possible economic synergies. Additionally, mysterious locations (e.g. Faerie Woods) hint at more to come.
+
+
+Why Will This Game Win?
+The goal is to make a fun game that also pays the bills. Here’s the argument for why this will work:
+
+* Popular Genres: Farming games continue to be popular on Steam, and cozy games overall are continuing to rise in popularity. Competition is high, but we can be confident the playerbase exists.
+
+* Unique Visuals: Every other farming game starts with a farm that gradually gets refurbished over the course of the game. This flips that expectation on its head - you are literally adding land to your farm in a way no other game does. This helps us stand out in screenshots and get player attention.
+
+* Surprise & Delight: Pulling an island from the sea when you don’t know what it is is exciting. It’s like opening up a present, and throughout each run you’ll open dozens of these delightful presents.
+
+* Light Fantasy: Players of farming games love mystery and fantasy, provided that they are light (faeries, magic woods) and not heavy (fireballs, lightning bolts). This fits the “cottage core” visual aesthetic that is currently popular, and also helps us explain how you can pull chunks of land from the bottom of the sea (it’s magic - perhaps you are rediscovering the ruins of Atlantis?).
+
+* Replayability: This is the biggest sales pitch differentiator. Your island will be different on every run, and you won’t be able to see all the Chunks in a single run. This is great for both replayability and for advertising; players who watch the game on Twitch still have a reason to play the game because they won’t have seen all (or even most!) of what the game has to offer.
+
+
+Core Game Mechanics
+The game takes place over multiple rounds (themed as days). At the start of the day, resources appear on each Chunk ready to be harvested. Once the player is done harvesting, planting, and processing all of the materials they’ve gained, they can head to their Camp to end the day. This resets resources and starts the daily cycle over again.
+
+   * No Time Limit: Unlike other farming games, there’s no time limit - this is more cozy (like Animal Crossing) and less like a second job (like Stardew Valley).
+
+
+Players will eventually have access to dozens if not hundreds of resources, items, and materials, but for now we’ll start with some basics (Wheat, Sheep, Wood, etc.).
+
+
+Old Man (New Chunks)
+The very first chunk you start on includes the mysterious Old Man. Functionally, he is the vendor for new chunks: you provide him with materials from your island, and he will give you special “bait” you can use to catch new Chunks of Land on your magical fishing hook.
+
+
+   * Choice of Two: For now, the Old Man will offer a choice of two different options when he offers you “bait”. In the future I’ll determine the logic for how this works; some basic logic is below.
+
+
+Flotsam (Daily Materials)
+Since you’re on an island with a fishing hook, you should basically be able to fish from any edge of the island. Fishing in this way gives you flotsam - daily materials to help you get started. In this way, you can get a couple of pieces of Wood or a handful of Fish without needing a dedicated Chunk (such as Dense Forest) to get the materials.
+
+
+   * Limited: You’ll be able to get only a handful of materials every day this way (3-5 items per day).
+
+
+   * Random: Items are always determined from a random pool based upon your available Chunks. Essentially, each Chunk adds items to the list of items randomly available via Flotsam each day.
+
+
+Tools (TBD)
+The goal of the game is to have tools that open up new crafting recipes; for now, you can make anything if you have the correct Chunks and Items to do so. This should help us prove out the concept faster.
+
+
+
+
+Chunk Order
+Here is the order in which Chunks unlock:
+   * Camp (Your Home) is always the first Chunk
+   * After 1 Chunk, you unlock Wheat Farm (Chunk #2)
+   * After 2 Chunks, you unlock Sheep Pasture and Bakery
+   * After 3 Chunks, you unlock Dense Forest and Granary
+   * After 4 Chunks, you unlock Cornfield and Fishing Pier
+   * After 5 Chunks, you unlock Rocks, Market Square, and more
+
+
+Your first choice is between Sheep Pasture and Bakery; after that, your options are randomized because you are limited to 2 choices at a time. Even with 10 Chunks, the game should feel different based on the options you pick; with more (50-100), there will be a tremendous number of playthroughs available.
+
+
+Early Game Chunks
+Here is a list of early game chunks to see if the game is any fun to play. Note: There are no numbers associated with any of these costs; this is a proof of concept more than it’s an economy design. If there is something fun here, we can absolutely design the detailed economy later. 🙂
+
+
+   * NOTE: Later Chunks have an ISLAND EFFECT that changes something about all Chunks on your Island. This is almost always a good thing and is meant to increase the player’s surprise & delight.
+
+
+Camp (Your Home)
+Basic campground to start; includes a Well. This eventually becomes your home.
+
+
+Characters
+   * Old Man: Give him what he asks for to unlock new islands
+   * Turtle: How you got here. No game effects at this time.
+
+
+Resource Gains
+   * Sticks: The ocean wind blows several sticks in every day
+   * Weeds: Resilient crops that you can’t quite get rid of
+   * Water: There’s unlimited water in the Well for you to use
+
+
+Resource Spends
+   * Fire: Requires 2 Sticks each day; necessary to sleep & end the day
+   * Wood: With enough Wood, you can build a House (removes need for Fire)
+
+
+Flotsam Added
+   * Fish: At the start of the game, the only thing you catch with your fishing rod is Fish
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Fish.
+
+
+
+
+Wheat Farm
+Key source of Wheat, first real farm for you to develop as a player.
+
+
+Characters
+   * Dog: Every successful game has a pet dog. Here is the dog for this game.
+
+
+Resource Gains
+   * Seeds: For Wheat. Buried in the earth, you uncover them by digging.
+   * Wheat: Grows in 3 days. Fast growing crop; don’t worry about seasons yet.
+   * Weeds: Now, the weeds are getting in the way of the fields. Prune them!
+
+
+Resource Spends
+   * Time: It takes effort to plow the fields and plant the Wheat. Wheat grows in 3 days.
+   * Water: Wheat also requires Water from the Well on your home Chunk.
+
+
+Flotsam Added
+   * Bag of Seeds: Uncommon, but helps you get started with your Wheat Farm
+   * Wood: Proper planks, not just Sticks. Can be used for building upgrades
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Wheat.
+
+
+
+
+Sheep Pasture
+Key source of Wheat, first real farm for you to develop as a player.
+
+
+Characters
+   * Sally: First NPC roughly your age; happy to chat, tells you about raising Sheep
+   * Sheep: They don’t talk (they’re sheep) but they’re here to get you started
+
+
+Resource Gains
+   * Baby Sheep: If properly fed and cared for, Sheep make Baby Sheep (as if by magic)
+   * Sheep: Grows in 7 days from Baby Sheep. Requires food and water.
+   * Wool: Can be harvested from Sheep who are fed Wheat (not just Weeds)
+
+
+Resource Spends
+   * Time: It takes effort to raise and generate Sheep. New Sheep generate in 7 days.
+   * Water: Sheep require good drinking water from your Well or they’ll get sick.
+   * Weeds: Hey, you have a use for Weeds! Sheep eat them, but it’s not their favorite.
+   * Wheat: Sheep are much happier eating Wheat. Sheep who eat Wheat produce Wool.
+
+
+Flotsam Added
+   * Baby Sheep: Rare; but on rare occasion, a Baby Sheep floats by on a plank of wood
+   * Wool: Uncommon, but helps you pay for the next Chunk if you’re struggling
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Wool.
+
+
+
+
+Bakery
+Key source of Bread, which you can give as a gift or eat. 
+
+
+Characters
+   * Pierre: French baker, laments being stuck in the middle of the sea
+   * Mouse: Always trying to steal breadcrumbs from the Bakery
+
+
+Resource Gains
+   * Bread: Requires Wheat, but it’s expensive. Much easier with Grain
+   * Pastries: Fancy Bread. TBD, but likely requires ingredients across many Chunks
+   * Money: The Bakery lets you sell Bread and Pastries you help make for Money
+   * Secrets: If you give Bread to the Mouse, you can unlock Mouse Helpers (TBD)
+   * The idea is Mouse Helpers automate certain tasks, like gathering Water from the Well
+
+
+Resource Spends
+   * Time: It takes time to bake Bread, but not that much time. New Bread can be made each day.
+   * Water: Bread requires warm water to activate Yeast, so you get to (once again) use your Well
+   * Wood: Used to heat the fireplace so the Bread can grow
+   * Wheat: Works OK, but not as well as Grain
+   * Grain: Works brilliantly - lets you bake all sorts of stuff
+
+
+Flotsam Added
+   * Recipes: Rare; but you can find recipes for different types of Pastries via Fishing now
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Bread.
+
+
+
+
+Dense Forest
+Key source of Wood, used for cooking and buildings (like your House)
+
+
+Characters
+   * Ashley: Rough and tumble lumberjack, happy to chat about woodcarvings
+   * Squirrel: Always trying to find Acorns around the forest and hoard them
+
+
+Resource Gains
+   * Wood: Cut down trees, get Wood. Trees are time intensive to cut down.
+   * Acorns: I guess these are Oak Trees, so get Acorns so you can feed Squirrel
+   * ISLAND EFFECT: Acorns start appearing all over your Island, not just here!
+   * Crates: Made from Wood, and excellent for storing extra food, supplies, etc.
+
+
+Resource Spends
+   * Time: It takes effort to grow new Trees. New Trees generate in 7 days.
+   * Acorns: Give Acorns to the Squirrel and you can get a pet Squirrel! Uses TBD
+
+
+Flotsam Added
+   * Bundle of Acorns: Uncommon, but now there’s a lot of Acorns in the ocean
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost 1 Home.
+   * The idea here is that you’ll use the Wood to build the home, where the Old Man can rest too.
+
+
+
+
+Granary
+Key source of Grain, but requires Wood and effort to repair it
+
+
+Characters
+   * Raven: Owner of the Granary; your age, but misses her family dearly (they’re elsewhere)
+   * Crow: A literal crow. Watches you, observes you, judges you (at least at the start of each run)
+
+
+Resource Gains
+   * Grain: Once it’s up and running, you can put Wheat inside and make the all-powerful Grain
+   * Wood: Can’t make directly, but Raven can bundle Sticks into Wood (great if you need Wood)
+
+
+Resource Spends
+   * Wood: One of the best uses for all of the Wood you’ve been collecting 
+   * Wheat: Put Wheat in, get Grain out
+   * Sticks: Put Sticks in, get Wood out
+
+
+Flotsam Added
+   * More Wood: Proper planks, and you get more of them than you did before
+   * Necessary in case you haven’t pulled the Dense Forest yet
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Grain.
+   * BUT: If the Bakery is also unlocked, the price is instead in Pastries.
+
+
+
+
+Cornfield
+Key source of Corn, which is another crop to be used alongside Wheat. This will eventually add more recipes to the Bakery and other places; for now, it’s kind of a second Wheat Field in terms of its function.
+
+
+Characters
+   * David: Happy to help, but boy is he hungry (eats Bread for quest dialogue)
+
+
+Resource Gains
+   * Kernels: Corn seeds, so you can plant Corn
+   * ISLAND EFFECT: Kernels start appearing all over your Island, not just here!
+   * Corn: If properly watered, Corn grows in 5 days
+   * Weeds: The weeds never stop, do they?
+
+
+Resource Spends
+   * Time: It takes effort to grow Corn (5 days, to be specific)
+   * Water: Corn has to be watered from your Well (can the Mouse or Squirrel help?)
+
+
+Flotsam Added
+   * Bundle of Kernels: Uncommon, as with Acorns and Seeds
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Corn.
+   * BUT: If the Bakery is also unlocked, the price is instead in Cornbread.
+
+
+
+
+Fishing Pier
+Key source of Fish, but now it’s a steady supply (not just what you get from Flotsam)
+
+
+Characters
+   * Maria: Fisherman’s daughter, happy to show you advanced fishing techniques
+
+
+Resource Gains
+   * Cool Fish: All kinds, entire books of them really - but you need to rebuild the Pier
+   * Wood: Can’t make directly, but Maria (like Raven) bundles Sticks into proper Wood
+
+
+Resource Spends
+   * Time: It takes time to Fish. You can Fish every day, up to a point.
+   * Wood: Required to rebuild the Pier
+
+
+Flotsam Added
+   * More Fish: Now you don’t find generic small fish, you find interesting fish
+   * ISLAND EFFECT: This affects any fishing you do across the island
+
+
+Next Chunk
+If this is the most recent Chunk (always true at game start), the next Chunk will cost Cool Fish.
+
+
+
+
+Rocks (TODO)
+Seals on the Rocks, plus an early source of Ore from rocks. Plus, Seals are here!
+
+
+Market Square (TODO)
+Main place for buying and selling merchandise. Requests begin here!
+
+
+
+
+Changes 4/8/26
+Fishing For Islands - Changes 4/8/26
+Focus on establishing a core loop. More quests, less farming.
+NOTE: To go back to the original tab, click this link.
+
+
+Copyright 2026 Stephen Hilber. All Rights Reserved.
+Reason for Changes
+Overview of Changes
+Island Spawning Changes
+Story Changes (for context)
+Game Pacing (for context)
+Core Game Mechanics
+Island Grid & Flowchart
+Island Availability by Day
+Crafting Table
+Tier 1 Islands (FTUE)
+Your Home (Day 1)
+Talk with Turtle
+Wheat Farm (Day 2)
+Sheep Pasture (Day 3 or 4)
+Fishing Pier (Day 3 or 4)
+Tier 2 Islands (Early Game)
+Bakery (Day 5+)
+Dense Forest (Day 5+)
+Rocks (Day 5+)
+Granary (Day 6+)
+Market Square (Day 6+)
+Tier 2 Islands (Stubs for now)
+Mermaid Cove (Day 6+) - STUB
+Faerie Woods (Day 6+) - STUB
+Auction House (Day 7+) - STUB
+Gold Mine (Day 8+) - STUB
+Mount Mystery (Day 9+) - STUB
+Tier 3 Islands (Mid Game)
+
+
+Reason for Changes
+Designer’s Note: My goal with these changes (and any future changes) is to find the fun as quickly as possible. I’m trying to trust my gut early to minimize the need to make more substantial changes later if and/or when we realize this game has legs.[a]
+
+
+Here’s what my gut is telling me:
+   * Islands are Cool. This is the really cool part, and it’s not on the market. There’s something here.
+   * Mystery is Good. Even with AI generated text, I want to know more about the world. Go deeper.[b]
+   * Goals are Missing. Both long-term and short-term goals. Why am I playing the game?
+   * Short term, I’d like a fun loop for every day. What does a “level” look like in this game?
+   * Long term, we need to advertise the mystery much faster (ideally from Day One).
+   * Core Loop Feels Off. Obviously my “economy notes” from before had no weight to them, but I still think there needs to be a really strong loop every single day (as mentioned above). I don’t think it’s enough to have a simple economy that becomes complex - the hooks need to be there early on.
+
+
+To paraphrase Margin Call (2011): Now that we know what the problem is, what can we do about it? My suggestions are detailed below.
+
+
+Overview of Changes
+In short, I’m making a lot of changes to how days work:
+   * On day start, you discover a new island (you do this every day)
+   * Every day, resources are refreshed and time advances (crops grow, sheep grow wool, etc.)
+   * Guideline: Every day, you should see visual progress for anything that develops slowly
+   * So Wheat goes from Planted → Sprouting → Growing → Flowering (Harvest Ready)
+   * Every island has a story, and every story has multiple quests to progress through
+   * Quests typically take one in-game day (the first quest always takes 1 day only)
+   * You can progress one quest per story per day (but you can progress every story each day)
+   * Think of these as Daily Quests from MMOs - you log in, play content, move on
+   * Many of these stories specifically involve Crafting, so there’s a new Crafting Table
+   * This makes up a lot of the early story - the Crafting Table is how you get situated
+   * Completing Quest 1 of the story of the new island you just discovered advances time to sunset.
+   * This is intended to be a visual effect - you can still do everything normally
+   * But it’s a visual effect that sets up the end of day conversation (see below)
+   * When you want to end the day, you go talk to the turtle pulling your big island
+   * This is a new visual perspective! Normal game is top down, this is sideways
+   * The reason it’s sideways is so you see the sunset that the Turtle is swimming towards
+   * In the sun, you see the silhouette of the new island you’ll reach tomorrow
+   * To end the day, you tell the Turtle your stories. This encourages the Turtle to swim on!
+   * You always need the first quest of your newest island’s story
+   * But you also tell the Turtle all the other stories you’ve experienced[c]
+
+
+So the core loop is Start Day → Explore New Island → Solve New Island Quest → Talk to Turtle.
+
+
+On each day, you’ll still be able to advance other quests in addition to the quest from your newest island - and you’ll want to in order to progress the overall story. But the core experience is “try something new every day”.[d] I think this will feel much better than the previous design did, where you might spend 2-3 in game days trying to grind up the requirements for a new island.
+
+
+Island Spawning Changes
+As before, the first few Islands (formerly Island Chunks, but let’s just call them Islands) come in a specific order. After that, though, the plan is for islands to spawn once prerequisites are met. This should make it easier to narratively connect islands together, since we’ll know which islands (and which characters) will be present whenever a given island appears.
+
+
+Going forward, this should also give us an easy way to provide content forks for repeated plays. For example, we can say that on every run you get either Island X or Island Y, and therefore you would see different islands that use those islands as prerequisites. An example of this behavior is detailed below.
+
+
+Story Changes (for context)
+I want to have an idea where the story is going, even if we aren’t implementing it right away
+   * No more Old Man - the Turtle is now the narrative gatekeeper for the entire story
+   * The Turtle finds you adrift at sea and sets you ashore on an island (your home)
+   * You then see a steady series of islands floating towards you, from the west
+   * So - you keep the Turtle company as he swims west in search of answers
+
+
+Narratively, the Turtle is powered by stories - as you tell him stories of the new islands you’ve helped out (i.e. quests you’ve completed), he gets excited and gets the energy he needs to swim faster and farther.
+   * I’ll figure out how to wrap this into the major game plot, but I need to write it first 🙂
+   * I guess you aren’t actually fishing for islands anymore. But I think it helps to see the new island coming towards you on the horizon. It’s like unwrapping a present - you’re guessing what it will be.[e]
+
+
+There are also checkpoints that you swim towards. We aren’t implementing these right away, but the idea here is that you will find larger locations that serve as the “dungeons” of the game. They won’t be combat based, but they will offer exploration opportunities and reveal answers to the “floating islands” question
+   * I’m envisioning four checkpoints right now corresponding to the Sun, Moon, Stars, and Sea.
+   * Once 3 of 4 checkpoints are cleared, the player will begin the endgame. 
+   * I haven’t designed this yet, but I’d expect you would stop finding new islands to give players time to finish the questlines of the most recent islands. It’s a countdown clock to the end!
+
+
+None of this is really reflected in the core game mechanics detailed below - but again, I wanted to have a better idea for where we’re going so that there’s a clear directionality to everything we work on.
+
+
+Game Pacing (for context)
+One additional note - since every day brings a new island, we now have a game that is marching forward to a conclusion whether the player wants it or not. I think this is important for pacing - you don’t want the game to lose momentum and you want the player to feel like they’re always making progress.
+
+
+Additionally, I think that the 
+
+
+Core Game Mechanics
+The game takes place over multiple rounds (themed as days). Each day brings a new island, and with it the first chapter of a new story.
+
+
+Note that the following mechanics are not changing:
+   * No Time Limit, No Hunger, No Stamina: This is meant to be a cozy game, not a survival sim
+   * Daily Items (Flotsam, etc.) Refresh Every Day: We want to be bountiful to the player
+   * I’ll detail exact item quantities in this version. Hopefully it all makes sense.
+
+
+Island Grid & Flowchart
+The image below contains all of the prerequisite information of when and where you should find each island. For this version, I am requesting locations be implemented exactly where they are in the grid. So Your Home is always west of Wheat Farm, which is always west of Dense Forest, etc.
+
+
+Prerequisites for Drawing Islands
+   * Current Day (Numbers): Prerequisite is met if the day is at least the current day.
+   * Represented by numbers in circles, e.g. (5) = can draw starting on day 5
+   * Previous Island (Arrows): Prerequisite is met if you already have one specific island unlocked
+   * Represented by the arrows, e.g. Bakery requires Wheat Farm
+   * Red Arrows require all prerequisites, e.g. Auction House needs Bakery & Market Square
+   * Blue Arrows require one prerequisite, e.g. Gold Mine needs Faerie or Mermaid, not both.
+   * This will help us create branching paths for replayability
+   * Randomness (Letters): On this run, you will draw either Island X or Island Y, but not both
+   * This is decided purely by chance at the start of the run (at least for now)
+   * For now, Island Z (Mount Mystery) will always appear once Gold Mine is on the board[f]
+
+
+
+
+  
+
+
+
+Island Availability by Day
+   1. Your Home, Talk to Turtle (FTUE)
+   2. Wheat Farm (FTUE 2)
+   3. Fishing Pier or Sheep Pasture
+   4. The other (3) you didn’t pick
+   5. Bakery, Dense Forest, Rocks added to possible draws
+   6. Granary, Market Square, Mermaid Cove, Faerie Woods added to draws
+   1. Reminder: All of the above islands have island prerequisites
+   2. Reminder: you get only one of Mermaid Cove or Faerie Woods
+   7. Auction House added to draws
+   8. Gold Mine added to draws
+   9. Earliest chance at Mount Mystery
+
+
+Crafting Table
+Recipes are mentioned throughout, but are compiled here
+   * First Craft: Driftwood → 5 Sticks (one time only)
+   * Shovel: Broken Spade, 2 Sticks, 3 Seaweed → Shovel
+   * Axe: Broken Axe, 2 Sticks, 3 Seaweed → Axe
+   * Fishing Rod: 4 Sticks, 1 Seaweed, Old Man’s Line → Fishing Rod
+   * Bed: 3 Driftwood, 3 Wool → Bed
+   * Driftwood: 5 Sticks, Magic Wand → Driftwood, Magic Wand
+   * Driftwood: Firm Wood, Magic Wand → 2 Driftwood, Magic Want
+   * Firm Wood: 2 Driftwood, Magic Wand → Firm Wood, Magic Wand
+   * Firm Wood: 1 Log → 3 Firm Wood (done at Logging Camp)
+   * ???: ???
+   * ???: ???
+   * ???: ???
+   * ???: ???
+   * ???: ???
+   * ???: ???
+
+
+Tier 1 Islands (FTUE)
+NOTE: When an Island references quests 2, it’s always a reference to that island’s quest 2 (or 3, or 4)
+Your Home (Day 1)
+Requirements: Day 1 (your first island)
+Basic campground to start; includes a Well. This eventually becomes your home.
+
+
+Characters
+   * Dog: Moves here on day 2, once you add Wheat Farm
+   * Turtle: Next door, uses special side profile view for chats
+
+
+Tools & Stations
+   * Axe (Tool): You find a nice, sharp axe with which to cut up the wood
+   * Big Rock (Station): Your first crafting table! Use to make stuff with tools (like Sticks)
+   * On day 2, this is replaced by a proper Crafting Table
+
+
+Resource Gains
+   * Driftwood: The ocean waves wash driftwood up every day
+   * You’ll find 4 pieces of Driftwood each day - no more, no less
+   * Seaweed: The ocean waves wash up seaweed as well. Good for binding!
+   * You’ll find 4 to 8 pieces of Seaweed each day
+   * Water: There’s unlimited water in the Well for you to use
+   * You may only carry 1 bucket of water in your inventory at a time
+   * But you can always go back to the well for more water
+   * The plan is for your character to literally be seen carrying the bucket of water
+   * Don’t worry about this for now, it requires better than SVG level graphics
+
+
+Resource Spends
+   * Sticks: Once you have an Axe, splits one unit of Driftwood into 5 Sticks
+   * For now, this is a one time action; the axe breaks once it hits the rock
+   * We do this to make sure you have enough driftwood to do what you need
+   * Play with Dog: Once you have Dog (day 2), you can play Fetch with the stick
+   * This will unlock the shovel, which requires the crafting table (quest 2 below)
+   * Fire: Requires 2 Sticks to light the fire. Once it’s lit, you don’t need to fuel it again
+
+
+Quest 1: Start a Fire (Day 1)
+   * Grab the axe, grab some Driftwood, make sticks, and start the fire
+   * Requirement: 2 Sticks, 2 Driftwood
+   * This wakes up the Turtle, opening the way to Talk to Turtle (letting you end your day)
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Make a Crafting Table (Day 2)
+   * Requirement: 3 Driftwood
+   * A bit wobbly, but lets you build everything else in the game
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3 or 4: Make a Fishing Rod (Day 3 or 4)
+   * Requirement: 4 Sticks, 1 Seaweed, Old Man’s Line
+   * Crude, but it’ll let you catch fish!
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3 or 4: Make a Bed (Day 3 or 4)
+   * Requirement: 3 Driftwood, 3 Wool
+   * A bit wobbly, but lets you build everything else in the game
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 5: Make Your House (Day 5)
+   * Now that you have a bed, it’s time to build a real, substantive house!
+   * Requirement: 30 Firm Wood, Hammer & Nails (from Sheep Pasture Quest 2)
+   * Once you’ve built your house, we can add tons of decorations! But for now, the rest is TODO
+   * Quest Complete! But the day isn’t over yet.
+
+
+Talk with Turtle
+Requirements: Complete Quest 1
+As mentioned, this is a side profile view where you are next to the Turtle’s head (the turtle is pulling all the islands you find - he works out!). You should see the sunset in front of you - you’re facing west now, and so the sun should reflect off the sea. Most notably, inside the sun you should see the silhouette of the next island you will receive.
+   * For now, the next island is purely random. You don’t get to influence this, at least not yet
+   * This can be functionality we add in later. It’s fun, but I’m not sure it’s necessary
+   * Also for now, this art can be super cheap - but I want this view to be part of the experience
+
+
+
+
+Wheat Farm (Day 2)
+Requirements: Day 2
+Key source of Wheat, first real farm for you to develop as a player.
+
+
+Characters
+   * Dog: Every successful game has a pet dog. Here is the dog for this game.
+   * As mentioned above, he runs to your home once you find him (great suggestion BTW)
+   * Dog wants to play fetch; this helps you find another tool (see Quest 1, below)
+   * Nobody Else: Let’s keep the early game a little more lonely - just you, Dog, and Turtle
+   * This should help add to early game mystery, and makes it more exciting to find people
+   * I know there’s a metric ton of dialogue I haven’t written yet, so I’m going for vibes right now
+
+
+Tools & Stations
+   * Shovel (Tool): Broken at first, you’ll repair it
+   * Magic Wand (Tool): Day 3 or 4, used (for now) to reverse unfortunate decisions in Crafting
+
+
+Resource Gains
+   * Seeds: For Wheat. Buried in the earth, you uncover them by digging.
+   * The digging is a one time thing; you then get Seeds from Wheat yields
+   * Wheat: Grows in 3 days. Planted (day 0) → Sprouting (d1) → Growing (d2) → Flowering (d3)
+   * Harvesting a Wheat gets you… 1 Wheat. It’s simple.
+   * You get 2-3 Seeds for every Wheat you harvest, so this field grows quickly!
+
+
+Resource Spends
+   * Time: It takes effort to plow the fields and plant the Wheat. Wheat grows in 3 days.
+   * Seeds: Used to grow Wheat. Once you find it, plant it.
+   * Water: Not much - one bucket of water will water all the seeds on the field
+
+
+Quest 1: Play with Dog → Plant Wheat Seeds
+   * Throw a stick at the dog! The dog will run… and not catch the stick.
+   * Instead, the dog will dig up a hole and return to you with a Broken Spade
+   * Use the Crafting Table to turn the Broken Spade into a Shovel 
+   * Requirement: 2 Sticks, 3 Seaweed
+   * NOTE: After you do this, you can also repair your Axe if you have Sticks (you’ll find more soon)
+   * Requirement: 2 Sticks, 3 Seaweed (you may need to wait until tomorrow to get seaweed)
+   * With Shovel in hand, go diffing on Wheat Isle - you’ll find a Bag of 10 Wheat Seeds and 5 Sticks
+   * These are one time gifts - they don’t respawn
+   * Plant the seeds in the holes you’ve dug and add Water from the well (1 bucket waters all seeds)
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Play with Dog → Find Magic Wand (Day 3 or 4)
+   * This quest unlocks the day you discover Wheat Farm, which is either Day 3 or Day 4
+   * Throw a stick at the dog! The dog will run… and not catch the stick. Again.
+   * Instead, the dog will dig up a hole and return to you with a Strange Stick
+   * Show this to Sally (on Wheat Farm) and… POOF! You turn her hair from purple to brown
+   * For now, the Magic Wand reverses prior decisions (in this case, hair dye)
+   * But the plan is for the Magic Wand to let you turn Sticks back into Driftwood, etc.
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3: Harvest the Wheat (Day 5)
+   * Straightforward quest where you finally get to harvest the Wheat you planted. Dog is happy!
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+Sheep Pasture (Day 3 or 4)
+Requirements: Day 3
+Key source of Wheat, first real farm for you to develop as a player.
+
+
+Tools & Stations
+   * Shears (Tool): You’ll need these, but Sally has an extra pair so you get them for free. Yay!
+   * Hammer & Nails (Tool): You’ll get these the day after you discover the Sheep Pasture (Quest 2)
+
+
+Characters
+   * Sally: First NPC roughly your age; happy to chat, tells you about raising Sheep. She has a hut!
+   * Sheep: There are 6 of them! They don’t talk (they’re sheep) but they’re here to get you started
+
+
+Resource Gains
+   * Wool: Can be harvested from Sheep using Shears
+   * Wool regrows after 2 days: Shorn (day 0) → Fuzz (d1) → Full Coat (d2)
+
+
+Resource Spends
+   * Time: It takes time to regrow the Wool from Sheep
+
+
+Quest 1: Make Beds for You and Sally (Separate Beds)
+   * Meet Sally, get Shears
+   * Shear the 6 Sheep, get 6 Wool
+   * Then, make Sally (and yourself) a bed! Fortunately, Sally has collected Driftwood (6 total)
+   * Requirement: 3 Driftwood, 3 Wool per bed. You need to make 2 Beds
+   * Once the beds are ready, Sally pushes her bed into her hut - and recommends you build a house!
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Collect Sheep, Build Fence
+   * Morning of Quest Start: All six Sheep scatter across the entire island chain (4 or 5 islands!)
+   * Sally realizes that she didn’t have to worry about the sheep running away on her small little island
+   * You’ll need to build a fence to keep in the Sheep. For that, you’ll need a Hammer and Nails
+   * Sally suggests you go to the Pier (required by this Day) - the Old Man has a spare Hammer!
+   * You’ll need to pry the nails off of a broken edge of the pier… causing it to collapse. Whoops! But you gain 4 Driftwood from that, so it’s good… right?
+   * Now it’s time to actually build the fence.
+   * Requirement: 3 Firm Wood, Hammer & Nails
+   * Not a Crafting Table item, because a Fence is too big. You build it here.
+   * For now, Firm Wood can be made using 2 Driftwood + the Magic Wand
+   * Now, you actually have to herd the sheep inside the fence. Good thing you have a Dog!
+   * Talk to your Dog. Then, you can point at a sheep and Dog will chase them into the pen.
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3: Adding a Lamb to the World
+   * A long term quest where, by some miracle, 6 Sheep become 7 Sheep.
+   * One of the sheep will be acting somewhat differently, and Sally will ask you to do things each day:
+   * First Day: Simply pet the pregnant Sheep
+   * Second Day: Bring the pregnant Sheep a Wheat
+   * Third Day: Bring the pregnant Sheep 2 Wheat
+   * Fourth Day: Bring the pregnant Sheep 3 Wheat
+   * Fifth Day: Bring the pregnant Sheep 4 Wheat
+   * On the sixth day, Sally will reveal a new baby Sheep! That’s all for now, the rest is TODO
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+Fishing Pier (Day 3 or 4)
+Requirements: Day 3
+Key source of Fish, but now it’s a steady supply. No more Flotsam, so it’s useful!
+
+
+Characters
+   * Maria: Fisherman’s daughter, happy to show you advanced fishing techniques
+   * Old Man: The Fisherman (quiet for now, but he’ll come up more later on in the story)
+
+
+Tools & Stations
+   * Fishing Pier (Station): Unlocks Fishing, which will be an entire subsystem once I design it
+
+
+Resource Gains
+   * Cool Fish: All kinds, entire books of them really - but you need to rebuild the Pier
+   * You can catch a maximum of 10 Fish per day.
+   * This means that the Golden Trout is going to be a pain to catch - that’s intentional
+   * I’ll fine tune the probabilities later, this is just to get the idea across.
+
+
+Resource Spends
+   * Time: It takes time to Fish. You can Fish every day, up to a point.
+
+
+Quest 1: Learn to Fish from Maria (& the Old Man)
+   * Meet Maria and the Old Man. Maria is sensible, the Old Man is crazy
+   * He probably has kernels of truth about the world hidden in his madness
+   * Maria gives you the Old Man’s Line; use this to build a Fishing Rod
+   * Requirement: 4 Sticks, 1 Seaweed, Old Man’s Line
+   * Once you have a Fishing Rod - you have to fish! This will be a minigame, eventually
+   * For now, you just auto catch Fish
+   * Once you have 5 Fish, everyone on the island joins in for a meal cooked by Maria
+   * That’s you, Maria, Old Man, Dog, and Sally (if she’s around)
+   * Maria cooks well. She invites you back tomorrow 
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Learn to Cook from Maria
+   * That was good cooking last night - and you’ve got a fire burning!
+   * Catch Fish and cook them (presumably another minigame)
+   * I guess this is fairly TODO but we can put in a placeholder for now
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3: Complete the Fishing Catalogue
+   * For now, there are 6 types of fish: Halibut, Herring, Snapper, Tuna, Flounder, and Golden Trout
+   * This is placeholder, but I don’t want to get hung up on specific fish just yet
+   * Whenever you fish, you catch a fish based on the following probabilities:
+   * Halibut: 33%
+   * Herring: 33%
+   * Snapper: 20% (only catchable on odd days)
+   * Tuna: 20% (only catchable on even days)
+   * Flounder: 12% (if day not divisible by 3), or 8% (if day divisible by 3)
+   * Golden Trout: 2% (if day not divisible by 3), or 6% (if day divisible by 3)
+   * Remember there’s a max of 10 Fish caught every day. This will take time!
+   * Turn in 1 fish of every type to complete this quest and make Maria and the Old Man happy.
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+Tier 2 Islands (Early Game)
+
+
+Bakery (Day 5+)
+Requirements: Day 5
+Key source of Bread, used for making everything taste better.
+
+
+Characters
+   * Pierre: French baker, laments being stuck in the middle of the sea
+   * Mouse: Always trying to steal breadcrumbs from the Bakery. Knows secrets
+
+
+Tools & Stations
+   * Oven: Bakes Bread, and eventually all the other Pastries as well.
+
+
+Resource Gains
+   * Bread: Requires Wheat, but it’s expensive. Much easier with Grain
+   * Secrets: Every day, you can give the Mouse a piece of Bread and it’ll tell you a secret
+   * Not sure how this works, but for now we can implement the spending of Bread at least
+   * Pastries will come, but everything here is TODO for now
+
+
+Resource Spends
+   * Time: It takes time to bake Bread, but not that much time. New Bread can be made each day.
+   * Water: Bread requires warm water to activate Yeast, so you get to (once again) use your Well
+   * Firm Wood: Used to heat the fireplace so the Bread can grow
+   * Wheat: Works OK, but not as well as Grain
+   * Grain: Works brilliantly - lets you bake all sorts of stuff
+
+
+Quest 1: Catching the Mouse
+   * The Mouse has taken Pierre’s bag of flour - you’ll need to chase him down!
+   * The Mouse moves from hiding spot to hiding spot. You’ll need to catch him 5 times.
+   * Mouse hides on Your Home, Wheat Farm, Sheep Pasture, Fishing Pier, and Bakery
+   * Whenever you catch him, he runs to the island farthest away from his current location.
+   * After you finally catch the Mouse, he relinquishes the flour - and tells you the following secret:
+   * “This mosaic of islands hides more mysteries than you know. Look below for answers.”
+   * After that somewhat cryptic and terrifying event, Pierre opens his Bakery to you for your use.
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: A Welcome Dinner
+   * Pierre puts together a list of ingredients for you so he can host a dinner for everyone.
+   * Requirements: 5 Halibut, 5 Herring, 10 Bread
+   * Once that’s done, a special scene happens where everyone comes over for dinner. Yay!
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3: Into the Cellar (Heretic’s Rune)
+   * The Mouse will reveal a great big secret to you… provided you pay his fee, of course
+   * Requirement: 13 Bread
+   * At this point, the mouse will reveal a hidden door into the cellar. You’ve never seen it before.
+   * Inside the cellar is a great red rune with 12 points, and a sigil in its center
+   * As you enter the cellar, the Mouse places the Bread in a circle and tells you a story 
+   * Bread is placed in the 12 clock positions, plus 1 piece at the center
+   * “I place this bread to remember those who defied the dreaded Symmetry.” 
+   * “Though they were branded Heretics, their defiance made us who we are today.”
+   * “All of us owe them our gratitude. With this bounty, we remember and honor them.”
+   * “And for you - you have my gratitude for indulging me. I wasn’t always a mouse, you know.”
+   * And with that, the Mouse gives you a powerful magical Flame Stone (details TODO)
+   * NOTE: I have a lot of work to do on the plot, but I want to hint at deep, dark secrets galore. The world should have many hidden places; this cellar is but one of them.
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+Dense Forest (Day 5+)
+Requirements: Day 5
+Key source of Firm Wood, used for making and improving buildings.
+
+
+Characters
+   * Ashley: Rough and tumble lumberjack, happy to chat about woodcarvings
+   * Squirrel: Always trying to find Acorns around the forest and hoard them
+
+
+Tools & Stations
+   * Logging Camp: used to turn Logs into Firm Wood
+
+
+Resource Gains
+   * Logs: Gained from Trees once you cut them down. Each tree grants 1 Log.
+   * Trees grow in 4 days. Planted → Seedling → Sapling → Young Tree → Full Tree
+   * You can only harvest Full Trees; you can’t cut them down early
+   * The Dense Forest is dense, and starts with 20 Trees.
+   * Firm Wood: Gained from Logs once you cut them further. Each Log grants 3 Firm Wood.
+   * Acorns: Acorns drop from the Oak trees whenever they’re fully grown.
+   * You get 1 Acorn per day per Full Tree on the board at day start
+   * Half of these Acorns are on the Dense Forest; half are found on the other islands
+   * Acorns just sort of blow everywhere. This is an early way to affect all islands
+   * You also get 1 Acorn every time you cut down a Full Tree
+
+
+Resource Spends
+   * Time: It takes time to cut down Trees, and time for them to regrow
+   * Water: One bucket of water will water up to 5 planted Acorns - they take more water than Wheat!
+   * As with Wheat, you only need to water them when you plant them
+
+
+Quest 1: Learn to Log with Ashley
+   * Meet Ashley and the Squirrel. Squirrel is suspicious and covetous, Ashley is chill.
+   * Requirement: Cut up 5 Logs (this will gain you 15 Wood)
+   * You get to keep all of the wood; Ashley just wants to see if you can do it.
+   * She values strength and action, and wants to see what you’re made of
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Storing Up Acorns
+   * Longer term quest that involves the Squirrel, with Ashley providing color commentary.
+   * The Squirrel wants to save up Acorns for the winter… whenever that happens. Lots of Acorns.
+   * Requirement: Give 100 Acorns to the Squirrel
+   * Note: You can give any number of Acorns to the Squirrel, he’s happy to bank them for you
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+ Quest 3: Winter is Here
+   * This quest triggers 3 days after you finish Quest 2. Winter comes - the Squirrel was correct!
+   * There’s a great big TODO about what happens when winter comes - for now, it’s cosmetic
+   * Notably, there should be snow everywhere, and snow should be falling as well
+   * The ocean doesn’t freeze, though - too much water, and it’s not quite that cold
+   * Talking to the Squirrel will result in the Squirrel (with Ashley’s help) asking you to make a Snowman
+   * Not a real craft, you’ll just make one on the ground
+   * Once you do, the Squirrel topples the Snowman… revealing a powerful magical Frost Stone.
+   * The intent is to slowly reveal more magic and mystery as the game continues on.
+   * Quest Complete! But the day isn’t over yet, and winter continues until tomorrow.
+   * Presumably you’ll use the Frost Stone to trigger winter, but I haven’t designed that yet.
+
+
+
+
+Rocks (Day 5+)
+Requirements: Day 5
+Key source of Firm Wood, used for making and improving buildings.
+
+
+Characters
+   * Timmy: Little boy, loves to watch the Seals play
+   * Seals: They love fish, and… well, that’s pretty much it.
+
+
+Tools & Stations
+   * None at this time.
+
+
+Resource Gains
+   * Pristine Shell: Timmy finds them and gives you one every day the Seals put on a show
+   * Pearls: Timmy gives them to you if you make the Seals really happy (see Quest 2)
+
+
+Resource Spends
+   * Fish: The Seals devour fish constantly
+
+
+Quest 1: Make the Seals Dance for Timmy
+   * Timmy is a little kid. He’s sad, because his friends haven’t come out yet. Can you help?
+   * Requirement: Bring 3 Fish (any kind will do)
+   * NOTE: If somehow you spent all your fish (hard but not impossible), the Old Man appears
+   * He’ll give the fish to Timmy and tell you he was holding them for you. How nice!
+   * Timmy then takes the fish and throws them in the water. Three Seals appear, and put on a show!
+   * To thank you, Timmy gives you a Pristine Shell. It’s a very nice seashell. Almost magical.
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Dancing for Pearls
+   * This quest continues for many days. Each day, you bring in 3 Fish and get a Pristine Shell.
+   * But… every day, Timmy will tell you that what the Seals really want is X (a certain type of fish). If you give Timmy 3 Fish of the specific type, you’ll receive a Pearl - a valuable item.
+   * First Day: Bring Timmy 3 Halibut
+   * Second Day: Bring Timmy 3 Herring
+   * Third Day: Bring Timmy 3 Snapper
+   * Fourth Day: Bring Timmy 3 Tuna
+   * Fifth Day: Bring Timmy 3 Flounder
+   * If you do all of this, Timmy will give you a Pearl Necklace. But where on earth did he get it from?
+   * Quest Complete! But the day isn’t over yet.
+   * NOTE: After you complete this quest, the Fish for Pearls action continues.
+   * Timmy will pick the fish above at random (1 in 5 chance for each of the above fish)
+   * He’ll also say “but if you want to give them a super rare treat, go ahead!”
+
+
+
+
+ Quest 3: The Dance of the Depths
+   * This is a hidden quest, and activates whenever the condition is met.
+   * The condition is to give Timmy (and the Seals) 3 Golden Trout. You know, the extremely rare fish.
+   * Upon receiving such a gift, the Seals do not dance. Instead, they swim next to shore - next to you.
+   * When you go to the Seals, they pull you into the ocean depths, far away from the sun’s light.
+   * In the dark of the ocean’s abyss, you will see a vision - an ethereal queen, filled with power.
+   * She tells you her name is Sen, and that you have been blessed by the darkness.
+   * Then you emerge on shore, with a powerful magical Shadow Stone in your possession.
+   * As with the Flame and Frost stones, details here are TODO.
+   * Quest Complete! But the day isn’t over yet.
+
+
+Granary (Day 6+)
+Requirements: Day 6, Bakery
+Windmill that mills Grain. Much needs to be rebuilt, but in time you’ll have a Grain production machine!
+NOTE: I’ll go back and do a more thorough pass of this, but this should work well enough for now.
+
+
+Characters
+   * Raven: Gothic, somewhat Edgar Allen Poe inspired owner of the Granary
+   * Crow: Raven’s pet Crow. The Crow flies around the island, always watching you.
+
+
+Tools & Stations
+   * Granary: Turn Wheat into Grain. 1 Wheat Becomes 3 Grain
+
+
+Resource Gains
+   * Grain: Get this from Wheat
+
+
+Resource Spends
+   * Wheat: Use it to make Grain
+
+
+Quest 1: Tour the Island
+   * Take Raven on a tour of the Island. She’ll meet every other character you’ve unlocked so far.
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Repair the Granary
+   * For now, this has a pretty steep cost. But once it’s done, you get the Granary!
+   * Requirement: 50 Fine Wood
+   * Quest Complete! But the day isn’t over yet.
+
+
+
+
+Market Square (Day 6+)
+Requirements: Day 6, Bakery
+Main place for buying and selling merchandise. Requests begin here!
+NOTE: I’ll go back and do a more thorough pass of this, but this should work well enough for now.
+
+
+Characters
+   * Alvin: Merchant, buys anything. He’s how you get Coins (TBD; for now, 1 Coin per good)
+   * Simon: Merchant, sells everything. Prices TBD; for now, 1 good gets you 1 coin.
+   * Theodore: Merchant, makes Requests. If you satisfy his request, you get 2x the normal Coins.
+
+
+Tools & Stations
+   * Shop: Buy and sell items for Coins
+
+
+Resource Gains
+   * Coins: Finally! You turn in other materials for Money, and use Money here to buy stuff you need.
+   * For now, everything you buy costs 1 Coin
+
+
+Resource Spends
+   * Everything: You can sell anything here, and buy many common goods too.
+   * For now, everything you sell gives you 1 Coin
+
+
+Quest 1: A Simple Request
+   * Theodore’s first request - give him 5 of anything. For now, this can even be Sticks.
+   * Quest and Day Complete!
+
+
+
+
+ Quest 2: Theodore’s Requests
+   * Seven requests over seven days.
+   * First Day: Give Theodore 7 Wool (reward: 14 Coins)
+   * Second Day: Give Theodore 7 Bread (reward: 14 Coins)
+   * Third Day: Give Theodore 7 Logs (reward: 14 Coins)
+   * Fourth Day: Give Theodore 7 Pristine Shells (reward: 14 Coins)
+   * Fifth Day: Give Theodore 7 Flounder (reward: 14 Coins)
+   * Sixth Day: Give Theodore 7 Grain (reward: 14 Coins)
+   * Seventh Day: Give Theodore 7 Pearls (reward: 14 Coins)
+   * Quest Complete! But the day isn’t over yet.
+
+
+Tier 2 Islands (Stubs for now)
+All of the below islands are stubs for now. They still have a quest for the first day the island appears, but they aren’t finished. That said, I still recommend implementing them for now so it’s easier to test the later quests of the other islands. 
+
+
+Mermaid Cove (Day 6+) - STUB
+Requirements: Day 6, Rocks
+EXCLUSIVE: Can’t coexist with Faerie Woods
+
+
+Quest 1: Swim to the South
+   * The Mermaids give you a Mermaid Stone - go swim to the Altar to the south and return.
+   * Wait, swim? Yes - the Mermaid Stone lets you swim in the ocean, just like a Mermaid.
+   * What happens on the Altar? Nothing for now - it’s a go there, go back quest.
+   * But the intent is that when Mermaid Cove is in the game, the ocean opens up to you.
+   * Quest and Day Complete!
+
+
+Faerie Woods (Day 6+) - STUB
+Requirements: Day 6, Dense Woods
+EXCLUSIVE: Can’t coexist with Mermaid Cove
+
+
+Quest 1: Enter the Faerie Realm
+   * The Faeries give you a Faerie Stone - walk through the portal to an Altar in the Faerie Realm.
+   * What happens on the Altar? Nothing for now - it’s a go there, go back quest.
+   * But the intent is that when Faerie Woods is in the game, the Faerie Realm opens up to you.
+   * Quest and Day Complete!
+
+
+Auction House (Day 7+) - STUB
+Requirements: Day 7, Bakery, Market Square 
+   * I know this is silly since Market Square already requires Bakery, but I’ll change this later 🙂
+
+
+Quest 1: Participate in an Auction
+   * You have the chance to get a Mysterious Painting, but you’ll need to win the auction to get it.
+   * Requirements: 21 Coins. If you don’t have the Coins, you’ll lose to a bid of 20 Coins.
+   * If you win, the Mysterious Painting goes in your house. Perhaps you’ll enter it later…?
+   * As with other islands (Mermaid/Faerie), I want to open up other realms with other secrets
+   * It’s likely that some of these “other realms” will get cut, but I think we need some of them to keep the surprise and delight alive as you continue to play through the game.
+   * Note that we could easily have a different Mysterious Painting for each playthrough.
+   * Quest and Day Complete!
+
+
+Gold Mine (Day 8+) - STUB
+Requirements: Day 8, either Mermaid Cove or Faerie Woods
+   * I know there’s a hole in the map right now, but I’ll figure out what I want to do with it later 🙂 
+
+
+Quest 1: Enter the Mine
+   * The Miner will give you a Pickaxe and Helmet (with a light on top), and then you go mining!
+   * The Mine is actually underneath the Gold Mine island. You don’t mine aboveground.
+   * For now, you dig up Gold and return to complete your quest. Pretty simple.
+   * The eventual goal is to dig underneath the islands you’ve found to explore them again!
+   * So you’d find different stuff under Mermaid Cove than you would under Faerie Woods.
+   * This will take the most work for me to design, but I think this is the most interesting of the “alternate realms” because it plays into the actual shape of the island. Which seems cool!
+   * Quest and Day Complete!
+
+
+Mount Mystery (Day 9+) - STUB
+Requirements: Day 9, Gold Mine 
+
+
+Quest 1: A Stone of Silence
+   * Climb the Mountain and you’ll get the Silent Stone.
+   * Quest and Day Complete!
+
+
+Quest 2: Gather the Stones
+   * As a placeholder victory for now, get five magical Stones to complete this quest.
+   * Stones are Flame, Frost, Shadow, Mermaid/Faerie, and Silent for now.
+   * Quest and Day Complete!
+
+
+Tier 3 Islands (Mid Game)
+Everything after this point is one great big TODO. The rough plan is as follows:
+   * Prior to unlocking Tier 3 islands, visit the City of the Sun and get the Sun Stone
+   * This unlocks Tier 3 Islands, your proper midgame locations
+   * ~8 islands later, you visit the Tower of the Moon and get the Moon Stone
+   * This unlocks Tier 4 Islands, which are your big endgame locations
+   * ~8 islands later, you visit the Court of Stars and get the Star Stone
+   * This would unlock Tier 5 Islands, if there were any. None are planned.
+   * But it may make sense to reveal 1 or 2 final islands before the big finale
+   * After 7 more days (finishing other islands), you finally reach the Temple of the Sea
+   * What happens here? It’s a secret! But it marks the end of the game & the run
+
+
+
+
+
+
+[a]1 total reaction
+Mike McManus reacted with 👍 at 2026-04-09 16:52 PM
+[b]yes i resonate with these two points the most
+[c]yes I like strongly arranging time of the user around the Day.  I think it was already showing signs of promise and these new ideas should solidify them! 
+
+
+Even with the ai-generated text + loose economy I found myself interested in the space + layout that happens do to floating islands. Deepening island <-> story connection is cool.
+[d]1 total reaction
+Mike McManus reacted with 👍 at 2026-04-09 16:58 PM
+[e]Yep i think this is stronger than old man + bait. It felt very heavy handed.
+[f]note for myself, worth creating a simple design json / db with this and other economy data.

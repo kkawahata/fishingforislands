@@ -1,0 +1,179 @@
+Fishing For Islands - Development Changelog
+============================================
+
+Build: April 2026
+Authors: Keith + Claude (AI pair programming)
+Based on game design by Stephen Hilber
+
+
+SESSION 1 - Initial Prototype
+-----------------------------
+- Project scaffolding: Vite + Three.js
+- 5 islands implemented: Your Home, Talk to Turtle, Wheat Farm, Sheep Pasture, Fishing Pier
+- Player character with WASD movement
+- Top-down 3D camera
+- Resource collection: driftwood, seaweed from beach edges
+- Crafting system: 6 recipes at Big Rock / Crafting Table stations
+- Quest system: 5 quests with step tracking
+- Day/night cycle: day counter, end-of-day turtle conversation scene
+- Dialogue system with speaker portraits and continue button
+- Inventory bar, quest tracker, crafting menu (HTML overlay UI)
+- Interaction system: E key + click to interact with nearby objects
+- NPC interactions: Dog (fetch), Sally (shears/beds), Maria (fishing), Old Man (line)
+- Fire lighting mechanic (Quest 1 completion)
+- Wheat planting and growth (3-day cycle)
+- Sheep shearing for wool
+- Day transitions with black screen + text
+
+
+SESSION 2 - Bug Fixes & Core Improvements
+------------------------------------------
+Bug Fixes:
+- Fixed player getting stuck after opening menus (stuck WASD keys)
+- Fixed crafting close button not restoring game mode
+- Keys now cleared continuously while in menus (prevents key-repeat re-sticking)
+
+Player & Camera:
+- Fixed player clipping into ground (rebuilt mesh with feet at y=0)
+- Fixed NPC meshes clipping (all rebuilt with feet at ground level)
+- Added OrbitControls: right-drag to orbit, scroll to zoom
+- Camera-relative WASD movement (W always moves "forward" from screen perspective)
+- Isometric snap-back: press V to return camera to default view
+- Clamped camera angles (30-72 degrees)
+
+Visual Improvements:
+- Water shader with Gerstner waves (4 wave layers, depth coloring, foam, sun specular)
+- Sky dome using Three.js Sky addon (atmospheric scattering)
+- Cloud layer with FBM noise shader (drifting, fading edges)
+- Switched to MeshLambertMaterial for performance
+- Semi-transparent ocean (can see island undersides)
+- Island platforms made thicker for visual weight
+
+
+SESSION 3 - Phase 1: Complete Tier 1 Content
+---------------------------------------------
+Bug Fixes:
+- Fixed beds_crafted flag never incrementing (sheep quest now completable)
+- Fixed turtle dialogue falling back to day-1 text for days 3+
+
+New Resources (22 added):
+- Wood tier: Firm Wood, Logs
+- Economy: Acorns, Grain, Coins
+- 6 fish types: Halibut, Herring, Snapper, Tuna, Flounder, Golden Trout
+- Quest items: Strange Stick, Pristine Shell, Pearls, Pearl Necklace
+- Magic stones: Flame, Frost, Shadow, Mermaid, Faerie, Silent
+
+Fish Type System:
+- 6 fish with day-parity probability mechanics
+- Snapper only on odd days, Tuna only on even days
+- Golden Trout 2% base / 6% on day%3 days
+- Max 10 fish per day
+
+New Crafting Recipes (7 added):
+- Magic Wand wood tier conversions (Sticks<->Driftwood<->Firm Wood)
+- Log to Firm Wood (at Logging Camp)
+- Bread (at Oven)
+- Wheat to Grain (at Granary)
+
+New Quests (8 added):
+- Home Q3-Q5: Fishing Rod, Bed, House
+- Wheat Q2-Q3: Magic Wand, Harvest
+- Sheep Q2: Build Fence
+- Pier Q2-Q3: Cooking, Fishing Catalogue
+
+
+SESSION 4 - Phase 2: Tier 2 Islands + Prerequisites
+----------------------------------------------------
+Island Prerequisite System:
+- Replaced flat day schedule with prerequisite-based unlock rules
+- Each island has: minimum day, required islands (all/any), choice groups
+- Choice groups: Sheep/Pier (day 3/4), Mermaid/Faerie (exclusive pair)
+- One island drawn per day from eligible pool (random)
+
+New Islands (3):
+- Bakery: Pierre (baker), Mouse (chase quest), Oven station
+  - Q1: Chase Mouse 5 times, Q2: Welcome Dinner, Q3: Cellar (Flame Stone)
+- Dense Forest: Ashley (lumberjack), Squirrel, Logging Camp station
+  - Q1: Cut 5 Logs, Q2: Store 100 Acorns
+- Rocks: Timmy (child), 3 Seals
+  - Q1: Feed Seals (Pristine Shell), Q2: Daily Pearl requests, Q3: Hidden (Shadow Stone)
+
+New 3D Shapes: oven, mouse, squirrel, seal, child, logging camp, pool
+
+
+SESSION 5 - Phase 3: Remaining Islands + Stubs
+-----------------------------------------------
+New Islands (7):
+- Granary: Raven, Crow, animated windmill, Grain milling
+  - Q1: Tour Island, Q2: Repair (50 Firm Wood)
+- Market Square: Alvin/Simon/Theodore merchants, Coins economy
+  - Q1: Simple Request, Q2: 7 daily requests
+- Mermaid Cove (stub): Mermaid Stone, swim to altar
+- Faerie Woods (stub): Faerie Stone, portal to realm
+- Auction House (stub): Bid 21 Coins for Mysterious Painting
+- Gold Mine (stub): Pickaxe + Helmet, mine for gold
+- Mount Mystery (stub): Silent Stone, Gather all 5 Stones (endgame)
+
+New 3D Shapes: windmill (animated), market stall, altar, portal, mountain, crow
+
+
+SESSION 6 - Phase 4: Advanced Mechanics
+----------------------------------------
+Multi-day Quest Framework:
+- dailyProgress tracker for quests spanning multiple days
+- Auto-advances when daily action completed + day ends
+
+Sheep Pregnancy (sheep_q3):
+- 6-day quest: pet sheep, feed increasing wheat, lamb born
+
+Mouse Chase Mechanic:
+- Mouse moves to farthest island when caught
+- Rendered dynamically on whichever island it's currently on
+
+Winter Event (forest_q3):
+- Triggers 3 days after giving Squirrel 100 acorns
+- Snow cosmetics: all island ground turns white
+- Build Snowman with Squirrel -> Frost Stone
+
+Save/Load System:
+- Auto-saves to localStorage at end of each day
+- Loads on startup (skips intro if save exists)
+- Full state serialization (inventory, flags, islands, choices, pregnancy, winter)
+
+
+SESSION 7 - UX Overhaul
+------------------------
+Click-to-Move:
+- Left-click on ground to walk there
+- Smooth steering with wall-sliding collision
+- WASD cancels click-to-move
+
+Hover Highlights:
+- Mouse hover shows pulsing gold ring under interactable objects
+- Floating tooltip follows cursor with object name
+- Cursor changes to pointer hand on hover
+
+Walk-then-Interact:
+- Click far-away NPC/object: player walks there, auto-interacts on arrival
+- Two-pass raycast: interactables first (priority), then ground
+- Pending interaction cleared by WASD or arrival
+
+Dev Tools Panel (backtick key):
+- Skip to Day N
+- Add any item in any quantity
+- Unlock All Islands
+- Give All Tools
+- Clear Save
+- Toggle game flags
+
+
+TOTALS
+------
+Islands:        15
+Quests:         35+
+Resources:      40+
+Crafting:       13 recipes across 5 stations
+NPCs:           25+ interaction handlers
+3D Shapes:      20+ unique geometries
+Dialogues:      30+ sequences
+Days of Play:   9+ (through endgame)

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fishing For Islands</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #1a1a2e; font-family: 'Segoe UI', sans-serif; }
+    canvas { display: block; }
+
+    #ui-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 10;
+    }
+    #ui-overlay > * { pointer-events: auto; }
+
+    /* Day Counter */
+    #day-display {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(0,0,0,0.7); color: #f0e68c; padding: 8px 16px;
+      border-radius: 8px; font-size: 18px; font-weight: bold;
+      border: 2px solid #8b7d3c;
+    }
+
+    /* Quest Tracker */
+    #quest-panel {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(0,0,0,0.7); color: #fff; padding: 12px 16px;
+      border-radius: 8px; min-width: 240px; max-width: 300px;
+      border: 2px solid #5a7a9a;
+    }
+    #quest-panel h3 { color: #7cb3d4; margin-bottom: 8px; font-size: 14px; }
+    .quest-item { font-size: 13px; margin-bottom: 6px; color: #ccc; }
+    .quest-item.active { color: #f0e68c; }
+    .quest-item.completed { color: #6a6; text-decoration: line-through; }
+
+    /* Inventory Bar */
+    #inventory-bar {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 4px; background: rgba(0,0,0,0.7);
+      padding: 8px; border-radius: 8px; border: 2px solid #5a5a3a;
+    }
+    .inv-slot {
+      width: 56px; height: 56px; background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2); border-radius: 6px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; position: relative; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .inv-slot:hover { border-color: #f0e68c; }
+    .inv-slot.active { border-color: #f0e68c; background: rgba(240,230,140,0.15); }
+    .inv-slot .icon { font-size: 22px; }
+    .inv-slot .count {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 11px; color: #fff; font-weight: bold;
+      text-shadow: 1px 1px 2px #000;
+    }
+    .inv-slot .label {
+      font-size: 8px; color: #aaa; margin-top: 1px;
+      text-align: center; line-height: 1;
+    }
+
+    /* Dialogue Box */
+    #dialogue-box {
+      display: none; position: absolute; bottom: 90px; left: 50%;
+      transform: translateX(-50%); width: 600px; max-width: 90%;
+      background: rgba(10,10,30,0.92); color: #fff; padding: 20px 24px;
+      border-radius: 12px; border: 2px solid #5a7a9a;
+    }
+    #dialogue-speaker {
+      color: #7cb3d4; font-weight: bold; font-size: 15px; margin-bottom: 6px;
+    }
+    #dialogue-text { font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+    #dialogue-continue {
+      background: #3a5a7a; color: #fff; border: none; padding: 6px 20px;
+      border-radius: 4px; cursor: pointer; font-size: 13px; float: right;
+    }
+    #dialogue-continue:hover { background: #4a6a8a; }
+
+    /* Crafting Menu */
+    #crafting-menu {
+      display: none; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); width: 500px; max-width: 90%;
+      background: rgba(10,10,30,0.95); color: #fff; padding: 24px;
+      border-radius: 12px; border: 2px solid #8b7d3c;
+    }
+    #crafting-menu h2 { color: #f0e68c; margin-bottom: 16px; font-size: 18px; }
+    .recipe-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; margin-bottom: 6px; background: rgba(255,255,255,0.05);
+      border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .recipe-item:hover { background: rgba(255,255,255,0.1); border-color: #5a7a9a; }
+    .recipe-item.craftable { border-color: rgba(100,200,100,0.3); }
+    .recipe-item.disabled { opacity: 0.4; cursor: default; }
+    .recipe-name { font-weight: bold; font-size: 14px; }
+    .recipe-cost { font-size: 12px; color: #aaa; }
+    .recipe-cost .has { color: #6a6; }
+    .recipe-cost .missing { color: #a66; }
+    #crafting-close {
+      background: #5a3a3a; color: #fff; border: none; padding: 6px 20px;
+      border-radius: 4px; cursor: pointer; font-size: 13px; margin-top: 12px;
+    }
+    #crafting-close:hover { background: #7a4a4a; }
+
+    /* Notifications */
+    #notifications {
+      position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .notification {
+      background: rgba(0,0,0,0.8); color: #f0e68c; padding: 6px 16px;
+      border-radius: 6px; font-size: 13px; animation: notif-fade 2s forwards;
+      white-space: nowrap;
+    }
+    @keyframes notif-fade {
+      0% { opacity: 0; transform: translateY(10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      70% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Interaction Prompt */
+    #interact-prompt {
+      display: none; position: absolute; bottom: 86px; left: 50%;
+      transform: translateX(-50%); background: rgba(0,0,0,0.7);
+      color: #f0e68c; padding: 6px 14px; border-radius: 6px; font-size: 13px;
+    }
+
+    /* Day Transition */
+    #day-transition {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; z-index: 100; justify-content: center; align-items: center;
+      flex-direction: column; color: #f0e68c; font-size: 28px;
+    }
+    #day-transition .sub { font-size: 16px; color: #8a8a6a; margin-top: 8px; }
+
+    /* Turtle Scene */
+    #turtle-scene {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 50; flex-direction: column;
+    }
+    #turtle-canvas-wrap { flex: 1; position: relative; }
+    #turtle-dialogue {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: 600px; max-width: 90%; background: rgba(10,10,30,0.92);
+      color: #fff; padding: 20px 24px; border-radius: 12px;
+      border: 2px solid #5a7a9a; z-index: 51;
+    }
+    #turtle-speaker { color: #7cb3d4; font-weight: bold; margin-bottom: 6px; }
+    #turtle-text { font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+    #turtle-btn {
+      background: #3a5a7a; color: #fff; border: none; padding: 8px 24px;
+      border-radius: 4px; cursor: pointer; font-size: 14px;
+    }
+    #turtle-btn:hover { background: #4a6a8a; }
+
+    /* Mouse tooltip */
+    #mouse-tooltip {
+      display: none; position: fixed; pointer-events: none;
+      background: rgba(10,10,30,0.9); color: #f0e68c;
+      padding: 4px 10px; border-radius: 4px; font-size: 12px;
+      border: 1px solid #5a7a9a; white-space: nowrap; z-index: 20;
+    }
+
+    /* Dev tools */
+    #dev-tools {
+      display: none; position: absolute; top: 60px; left: 16px;
+      background: rgba(10,10,30,0.92); color: #ccc;
+      padding: 12px 16px; border-radius: 8px; border: 2px solid #aa4444;
+      font-size: 12px; max-width: 280px; z-index: 30;
+    }
+    #dev-tools h3 { color: #ff6666; margin-bottom: 10px; font-size: 14px; }
+    .dev-section {
+      margin-bottom: 8px; display: flex; gap: 4px;
+      align-items: center; flex-wrap: wrap;
+    }
+    .dev-section label { color: #aaa; font-size: 11px; width: 100%; }
+    .dev-section input, .dev-section select {
+      background: rgba(255,255,255,0.1); color: #fff;
+      border: 1px solid #555; border-radius: 3px; padding: 2px 6px; font-size: 11px;
+    }
+    .dev-section input[type="number"] { width: 50px; }
+    .dev-section select { flex: 1; min-width: 0; }
+    .dev-section button {
+      background: #3a3a5a; color: #f0e68c; border: 1px solid #666;
+      border-radius: 3px; padding: 3px 10px; cursor: pointer; font-size: 11px;
+    }
+    .dev-section button:hover { background: #4a4a7a; }
+
+    /* Controls help */
+    #controls-help {
+      position: absolute; bottom: 16px; left: 16px;
+      background: rgba(0,0,0,0.6); color: #888; padding: 8px 12px;
+      border-radius: 6px; font-size: 11px; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui-overlay">
+    <div id="day-display">Day 1</div>
+
+    <div id="quest-panel">
+      <h3>Quests</h3>
+      <div id="quest-list"></div>
+    </div>
+
+    <div id="inventory-bar"></div>
+
+    <div id="dialogue-box">
+      <div id="dialogue-speaker"></div>
+      <div id="dialogue-text"></div>
+      <button id="dialogue-continue">Continue</button>
+    </div>
+
+    <div id="crafting-menu">
+      <h2>Crafting Table</h2>
+      <div id="recipe-list"></div>
+      <button id="crafting-close">Close [C]</button>
+    </div>
+
+    <div id="notifications"></div>
+    <div id="interact-prompt"></div>
+    <div id="mouse-tooltip"></div>
+
+    <div id="dev-tools">
+      <h3>Dev Tools [`]</h3>
+      <div class="dev-section">
+        <label>Skip to Day</label>
+        <input type="number" id="dev-day-input" min="1" max="100" value="5">
+        <button id="dev-skip-day">Go</button>
+      </div>
+      <div class="dev-section">
+        <label>Add Item</label>
+        <select id="dev-item-select"></select>
+        <input type="number" id="dev-item-count" min="1" max="99" value="10">
+        <button id="dev-add-item">Add</button>
+      </div>
+      <div class="dev-section">
+        <button id="dev-unlock-all">Unlock All Islands</button>
+        <button id="dev-give-tools">Give All Tools</button>
+      </div>
+      <div class="dev-section">
+        <button id="dev-clear-save">Clear Save</button>
+      </div>
+      <div class="dev-section">
+        <label>Toggle Flag</label>
+        <select id="dev-flag-select"></select>
+        <button id="dev-toggle-flag">Toggle</button>
+      </div>
+    </div>
+
+    <div id="controls-help">
+      Click - Move/Interact &nbsp;|&nbsp; WASD - Move &nbsp;|&nbsp; E - Interact &nbsp;|&nbsp; C - Craft &nbsp;|&nbsp; Right-drag - Orbit &nbsp;|&nbsp; Scroll - Zoom &nbsp;|&nbsp; V - Camera &nbsp;|&nbsp; ` - Dev
+    </div>
+  </div>
+
+  <div id="day-transition">
+    <div id="day-transition-text"></div>
+    <div class="sub" id="day-transition-sub"></div>
+  </div>
+
+  <div id="turtle-scene">
+    <div id="turtle-canvas-wrap"></div>
+    <div id="turtle-dialogue">
+      <div id="turtle-speaker">Turtle</div>
+      <div id="turtle-text"></div>
+      <button id="turtle-btn">Continue</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
