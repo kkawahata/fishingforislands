@@ -336,7 +336,15 @@ export class GameState {
     const active = [];
     for (const quest of Object.values(QUESTS)) {
       if (quest.requiresDay && quest.requiresDay > this.day) continue;
-      if (!this.isIslandUnlocked(quest.island)) continue;
+      // Island gating: support both the legacy single `island` and `islands[]`.
+      // All listed islands must be unlocked (AND semantics).
+      const islandIds = Array.isArray(quest.islands) && quest.islands.length
+        ? quest.islands
+        : (quest.island ? [quest.island] : []);
+      if (!islandIds.every(id => this.isIslandUnlocked(id))) continue;
+      // Prerequisite quests: all must be complete.
+      if (Array.isArray(quest.requiresQuests) &&
+          !quest.requiresQuests.every(qid => this.isQuestComplete(qid))) continue;
       if (this.isQuestComplete(quest.id)) continue;
       // Hidden quests only show when close to completion
       if (quest.hidden) {
