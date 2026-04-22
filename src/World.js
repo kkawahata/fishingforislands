@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
-import { ISLANDS, ISLAND_GRID, ISLAND_SPACING, getIslandWorldPos, getTurtleBridgeBand, RESOURCES } from './data.js';
+import { ISLANDS, ISLAND_GRID, ISLAND_SPACING, getIslandWorldPos, getTurtleBridgeBand, getTurtleBodyPos, RESOURCES } from './data.js';
 
 const TILE = 1;
 
@@ -140,6 +140,7 @@ export class World {
     this.resourceMeshes = [];
     this.npcMeshes = [];
     this.bridges = [];
+    this.turtleMeshes = [];
     this.groundMeshes = [];
     this._createOcean();
     this._createSky();
@@ -256,6 +257,8 @@ export class World {
     this.groundMeshes = [];
     for (const b of this.bridges) this.scene.remove(b);
     this.bridges = [];
+    for (const m of this.turtleMeshes) this.scene.remove(m);
+    this.turtleMeshes = [];
 
     for (const islandId of gameState.unlockedIslands) {
       const def = ISLANDS[islandId];
@@ -268,8 +271,9 @@ export class World {
       this.islandGroups[islandId] = group;
     }
 
-    // Bridges between adjacent islands
+    // Dock + turtle
     this._buildBridges(gameState);
+    if (gameState.unlockedIslands.has('turtle')) this._buildTurtle();
   }
 
   _createIsland(def, gameState) {
@@ -297,19 +301,6 @@ export class World {
     platform.userData.islandId = def.id;
     group.add(platform);
     this.groundMeshes.push(platform);
-
-    // Sandy beach rim — only on turtle, which still floats offshore.
-    // Non-turtle islands share edges with neighbors, so a sand rim between
-    // two land biomes would look wrong.
-    if (def.isTurtleIsland) {
-      const beachGeo = new THREE.BoxGeometry(size + 0.4, 0.3, size + 0.4);
-      const beachMat = new THREE.MeshLambertMaterial({ color: 0xe8d78a, flatShading: true });
-      const beach = new THREE.Mesh(beachGeo, beachMat);
-      beach.position.y = -0.6;
-      group.add(beach);
-      this._addTurtleIsland(group, def);
-      return group;
-    }
 
     // Add some grass patches
     for (let i = 0; i < 6; i++) {
@@ -368,42 +359,46 @@ export class World {
     return group;
   }
 
-  _addTurtleIsland(group, def) {
-    // The turtle "island" is small, with the turtle as the main feature
-    // Turtle body (ellipsoid)
+  // The turtle floats in the water west of the dock, not on any island.
+  // Its head faces east so the player approaching down the dock sees it,
+  // and the head is the interactable that triggers the turtle scene.
+  _buildTurtle() {
+    const pos = getTurtleBodyPos();
+    const group = new THREE.Group();
+    group.position.set(pos.x, pos.y, pos.z);
+
     const bodyGeo = new THREE.SphereGeometry(2.0, 8, 6);
     bodyGeo.scale(1.4, 0.5, 1);
     const bodyMat = new THREE.MeshLambertMaterial({ color: 0x5a8a3a, flatShading: true });
     const body = new THREE.Mesh(bodyGeo, bodyMat);
-    body.position.set(0, 0.3, 0);
     group.add(body);
 
-    // Shell pattern
     const shellGeo = new THREE.SphereGeometry(1.8, 6, 4);
     shellGeo.scale(1.3, 0.6, 0.9);
     const shellMat = new THREE.MeshLambertMaterial({ color: 0x4a7a2a, flatShading: true });
     const shell = new THREE.Mesh(shellGeo, shellMat);
-    shell.position.set(0, 0.5, 0);
+    shell.position.y = 0.2;
     group.add(shell);
 
-    // Head
     const headGeo = new THREE.SphereGeometry(0.6, 6, 6);
     const headMat = new THREE.MeshLambertMaterial({ color: 0x6a9a4a, flatShading: true });
     const head = new THREE.Mesh(headGeo, headMat);
-    head.position.set(-2.2, 0.5, 0);
+    head.position.set(2.2, 0.2, 0); // facing east toward the dock
     head.userData = { id: 'turtle_npc', name: 'Turtle', islandId: 'turtle', type: 'npc', interaction: 'turtle' };
     group.add(head);
     this.interactables.push(head);
-    this.npcMeshes.push(head);
 
-    // Flippers
     for (const side of [-1, 1]) {
       const flipGeo = new THREE.BoxGeometry(1.2, 0.15, 0.5);
       const flip = new THREE.Mesh(flipGeo, bodyMat);
-      flip.position.set(-0.5, 0.1, side * 1.8);
-      flip.rotation.y = side * 0.3;
+      flip.position.set(0.5, -0.2, side * 1.8);
+      flip.rotation.y = -side * 0.3;
       group.add(flip);
     }
+
+    group.userData.isTurtle = true; // marker for bobbing animation
+    this.scene.add(group);
+    this.turtleMeshes.push(group);
   }
 
   _createObject(obj, def, gameState) {
@@ -830,10 +825,6 @@ export class World {
         break;
       }
 
-      case 'turtle': {
-        break;
-      }
-
       case 'crow': {
         // Small dark bird
         const cBody = new THREE.SphereGeometry(0.1, 5, 5);
@@ -1140,6 +1131,14 @@ export class World {
           child.rotation.z = time * 0.8;
         }
       });
+    }
+
+    // Gentle turtle bob on the water
+    for (const group of this.turtleMeshes) {
+      if (!group.userData.isTurtle) continue;
+      const baseY = getTurtleBodyPos().y;
+      group.position.y = baseY + Math.sin(time * 0.8) * 0.06;
+      group.rotation.z = Math.sin(time * 0.5) * 0.03;
     }
   }
 

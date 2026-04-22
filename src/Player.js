@@ -160,12 +160,22 @@ export class Player {
         this._walkPhase = 0;
         this.mesh.position.y = GROUND_Y;
       } else {
+        const prevX = this.mesh.position.x;
+        const prevZ = this.mesh.position.z;
         toTarget.normalize();
         const step = Math.min(MOVE_SPEED * dt, dist);
         this._applyMovement(toTarget, step, gameState);
         this.mesh.rotation.y = Math.atan2(toTarget.x, toTarget.z);
         this._walkPhase += dt * 12;
         this.mesh.position.y = GROUND_Y + Math.sin(this._walkPhase) * 0.03;
+
+        // Stuck: target is unreachable (e.g. turtle head in water). Abort
+        // the walk so the pending-interaction arrival check can fire.
+        const moved = Math.hypot(this.mesh.position.x - prevX, this.mesh.position.z - prevZ);
+        if (moved < step * 0.1) {
+          this._moveTargetActive = false;
+          this._moveTarget = null;
+        }
       }
 
     } else {

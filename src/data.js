@@ -164,10 +164,16 @@ export const RECIPES = [
 ];
 
 // ── Island grid positions (col, row) from the spec flowchart ──
-// Grid cells are ISLAND_SPACING world units wide. Non-turtle islands are
-// size=8 so they share edges; turtle is size=12 and sits off-grid with a
-// water gap, spanned by a bridge to home.
+// All islands are size=8 on a uniform ISLAND_SPACING grid, so neighbors
+// share edges exactly. The turtle is not an island — it floats at sea,
+// reached by a dock extending from home.
 export const ISLAND_SPACING = 8;
+
+// Dock/turtle geometry (fixed — the turtle has no island to anchor to).
+const DOCK_LENGTH = 4;
+const DOCK_WIDTH = 1.2;
+const DOCK_OVERLAP = 1; // how far the plank extends inside home
+const TURTLE_OFFSET_FROM_DOCK = 3; // gap between dock west end and turtle body center
 
 export function getIslandWorldPos(islandId) {
   const g = ISLAND_GRID[islandId];
@@ -179,32 +185,33 @@ export function getIslandWorldPos(islandId) {
   };
 }
 
-// Axis-aligned box covering the turtle→home bridge (with a small overlap
-// into each island for a seamless walk-on). Shared between World rendering
+// Axis-aligned walkable band for the dock. Shared between World rendering
 // and Player walkability so they can't drift.
 export function getTurtleBridgeBand() {
-  const t = getIslandWorldPos('turtle');
-  const h = getIslandWorldPos('home');
-  const tSize = ISLANDS.turtle.size;
-  const hSize = ISLANDS.home.size;
-  const overlap = 1;
-  const halfWidth = 0.6; // matches visual bridge plank width (1.2)
-  if (t.z === h.z) {
-    // Horizontal (east/west) bridge
-    const [minX, maxX] = t.x < h.x
-      ? [t.x + tSize / 2 - overlap, h.x - hSize / 2 + overlap]
-      : [h.x + hSize / 2 - overlap, t.x - tSize / 2 + overlap];
-    return { minX, maxX, minZ: t.z - halfWidth, maxZ: t.z + halfWidth };
-  }
-  // Vertical (north/south) bridge
-  const [minZ, maxZ] = t.z < h.z
-    ? [t.z + tSize / 2 - overlap, h.z - hSize / 2 + overlap]
-    : [h.z + hSize / 2 - overlap, t.z - tSize / 2 + overlap];
-  return { minX: t.x - halfWidth, maxX: t.x + halfWidth, minZ, maxZ };
+  const home = getIslandWorldPos('home');
+  const homeSize = ISLANDS.home.size;
+  const eastEdge = home.x - homeSize / 2 + DOCK_OVERLAP;
+  const westEdge = eastEdge - DOCK_LENGTH;
+  const halfWidth = DOCK_WIDTH / 2;
+  return {
+    minX: westEdge,
+    maxX: eastEdge,
+    minZ: home.z - halfWidth,
+    maxZ: home.z + halfWidth,
+  };
+}
+
+// Where the turtle's body sits in the water, west of the dock.
+export function getTurtleBodyPos() {
+  const band = getTurtleBridgeBand();
+  return {
+    x: band.minX - TURTLE_OFFSET_FROM_DOCK,
+    y: 0.3,
+    z: (band.minZ + band.maxZ) / 2,
+  };
 }
 
 export const ISLAND_GRID = {
-  turtle:        { col: 0, row: 2, xOffset: -8 },
   home:          { col: 1, row: 2 },
   wheat_farm:    { col: 2, row: 2 },
   fishing_pier:  { col: 1, row: 3 },
@@ -223,20 +230,6 @@ export const ISLAND_GRID = {
 
 // ── Island definitions ──
 export const ISLANDS = {
-  turtle: {
-    id: 'turtle',
-    name: 'Talk to Turtle',
-    tier: 1,
-    size: 12,
-    groundColor: 0x5a9a4a,
-    isTurtleIsland: true,
-    objects: [],
-    npcs: [
-      { id: 'turtle_npc', name: 'Turtle', x: 1, z: 3, color: 0x5a8a3a, shape: 'turtle' },
-    ],
-    dailyResources: [],
-  },
-
   home: {
     id: 'home',
     name: 'Your Home',
