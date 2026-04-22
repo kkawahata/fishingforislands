@@ -487,6 +487,13 @@ export const QUESTS = {
       { id: 'light_fire', text: 'Light the Fire (2 Sticks + 2 Driftwood)', check: (gs) => gs.flags.fire_lit },
     ],
     completesDay: true,
+    dialogue: {
+      onComplete: [
+        { speaker: '', text: '*The fire crackles to life, sending sparks into the evening sky.*' },
+        { speaker: '', text: '*In the distance, you see the Turtle stir. It seems drawn to the warmth.*' },
+        { speaker: '', text: 'You can now Talk to the Turtle to end the day.' },
+      ],
+    },
   },
   home_q2: {
     id: 'home_q2',
@@ -512,12 +519,32 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 2,
+    dialogue: {
+      meetDog: [
+        { speaker: '', text: '*A friendly dog bounds towards you, tail wagging!*' },
+        { speaker: '', text: "*The dog sniffs you, decides you're okay, and runs off towards Your Home.*" },
+        { speaker: '', text: 'The dog seems to want to play fetch! Throw it a stick.' },
+      ],
+      fetchSticks: [
+        { speaker: '', text: '*You throw a stick! The dog runs after it...*' },
+        { speaker: '', text: "*...and completely ignores the stick. Instead, it digs a hole and comes back with something.*" },
+        { speaker: '', text: "The dog found a Broken Spade! Maybe you can fix this." },
+      ],
+    },
   },
   sheep_q1: {
     id: 'sheep_q1',
     island: 'sheep_pasture',
     name: 'Make Beds for You and Sally',
     description: 'Shear sheep and craft beds',
+    dialogue: {
+      meetSally: [
+        { speaker: 'Sally', text: "Oh! Hello there! I didn't expect to see anyone else out here." },
+        { speaker: 'Sally', text: "I'm Sally. I've been taking care of these sheep for... well, a while now." },
+        { speaker: 'Sally', text: "Here, take these shears. You'll need them to get wool from the sheep." },
+        { speaker: 'Sally', text: "If you could help me make some beds, that would be amazing! I have some driftwood saved up." },
+      ],
+    },
     steps: [
       { id: 'meet_sally', text: 'Meet Sally', check: (gs) => gs.flags.met_sally },
       { id: 'get_shears', text: 'Get Shears from Sally', check: (gs) => gs.hasItem('shears') },
@@ -532,6 +559,20 @@ export const QUESTS = {
     island: 'fishing_pier',
     name: 'Learn to Fish',
     description: 'Meet Maria and the Old Man, build a fishing rod',
+    dialogue: {
+      meetMaria: [
+        { speaker: 'Maria', text: "Hey! Welcome to the pier - or what's left of it, anyway." },
+        { speaker: 'Maria', text: "I'm Maria. My father and I have been here since... well, we don't remember." },
+        { speaker: 'Maria', text: "He's a bit... eccentric. But he has a good fishing line you could use!" },
+        { speaker: 'Maria', text: "Talk to him and I'll teach you how to fish." },
+      ],
+      meetOldMan: [
+        { speaker: 'Old Man', text: "Eh? Another one, washed up by the tides..." },
+        { speaker: 'Old Man', text: "The islands... they weren't always like this, you know. Scattered across the sea..." },
+        { speaker: 'Old Man', text: "Here. Take my fishing line. I don't need it anymore. *He hands you a weathered line.*" },
+        { speaker: 'Old Man', text: "Catch enough fish and we'll have ourselves a proper feast!" },
+      ],
+    },
     steps: [
       { id: 'meet_maria', text: 'Meet Maria', check: (gs) => gs.flags.met_maria },
       { id: 'get_line', text: "Get the Old Man's Line", check: (gs) => gs.hasItem('old_mans_line') },
@@ -581,6 +622,19 @@ export const QUESTS = {
     island: 'wheat_farm',
     name: 'Find the Magic Wand',
     description: 'Play fetch again — the Dog finds something strange',
+    dialogue: {
+      fetchSticksAgain: [
+        { speaker: '', text: '*You throw another stick! The dog runs after it...*' },
+        { speaker: '', text: "*...and once again ignores the stick. More digging. The dog returns with a Strange Stick.*" },
+        { speaker: '', text: "This stick is glowing faintly. Maybe someone knows what it is?" },
+      ],
+      magicWandRevealed: [
+        { speaker: 'Sally', text: "What's that you've got there? Let me see..." },
+        { speaker: '', text: "*Sally touches the Strange Stick and — POOF! Her hair turns from purple to brown.*" },
+        { speaker: 'Sally', text: "Whoa! That's... that's a Magic Wand! It reverses things!" },
+        { speaker: 'Sally', text: "Here, you keep it. I think you'll find more use for it than I will." },
+      ],
+    },
     steps: [
       { id: 'throw_stick_2', text: 'Throw another Stick to the Dog', check: (gs) => gs.flags.found_strange_stick },
       { id: 'show_sally', text: 'Show the Strange Stick to Sally', check: (gs) => gs.hasItem('magic_wand') },
@@ -596,6 +650,13 @@ export const QUESTS = {
       { id: 'harvest', text: 'Harvest the Wheat', check: (gs) => gs.flags.first_harvest_done },
     ],
     requiresDay: 5,
+    dialogue: {
+      onFirstHarvest: [
+        { speaker: '', text: "*The golden wheat sways in the breeze, ready to be harvested.*" },
+        { speaker: '', text: "*You carefully gather the wheat. The Dog barks happily at your side.*" },
+        { speaker: '', text: "First harvest! The seeds of your labor have borne fruit." },
+      ],
+    },
   },
   sheep_q2: {
     id: 'sheep_q2',
@@ -635,6 +696,19 @@ export const QUESTS = {
       { id: 'cook', text: 'Cook Fish at the Fire Pit', check: (gs) => gs.flags.cooked_fish },
     ],
     requiresDay: 4,
+    dialogue: {
+      cookFirst: [
+        { speaker: 'Maria', text: "Now that you've caught some fish, let me show you how to cook them properly." },
+        { speaker: 'Maria', text: "Take them to the fire pit on Your Home island. Season with seaweed and cook over the flames." },
+        { speaker: '', text: "*The aroma of freshly cooked fish fills the air.*" },
+        { speaker: 'Maria', text: "Not bad for a beginner! You can cook fish at the fire pit whenever you like now." },
+      ],
+      hammerGiven: [
+        { speaker: 'Old Man', text: "A hammer? Sure, I've got a spare one somewhere around here..." },
+        { speaker: 'Old Man', text: "*He rummages through a pile of old tools and produces a hammer and some nails.*" },
+        { speaker: 'Old Man', text: "Take good care of these. Tools are hard to come by out here." },
+      ],
+    },
   },
   pier_q3: {
     id: 'pier_q3',
@@ -660,6 +734,23 @@ export const QUESTS = {
     island: 'bakery',
     name: 'Catching the Mouse',
     description: "The Mouse stole Pierre's flour! Catch it 5 times.",
+    dialogue: {
+      meetPierre: [
+        { speaker: 'Pierre', text: "Ah, bonjour! Welcome to my Bakery... or what's left of it." },
+        { speaker: 'Pierre', text: "That accursed Mouse has stolen my flour! Without it, I cannot bake." },
+        { speaker: 'Pierre', text: "Please, catch that little thief! He's hiding somewhere on this island." },
+      ],
+      mouseCaught: [
+        { speaker: '', text: "*You corner the Mouse! It squeaks indignantly and drops a handful of flour.*" },
+        { speaker: 'Mouse', text: "'Squeak!' (The Mouse darts away to a new hiding spot.)" },
+      ],
+      mouseFinal: [
+        { speaker: '', text: "*The Mouse finally gives up. It sits down and pushes the flour bag toward you.*" },
+        { speaker: 'Mouse', text: '"...Fine. You win. But know this:"' },
+        { speaker: 'Mouse', text: '"This mosaic of islands hides more mysteries than you know. Look below for answers."' },
+        { speaker: 'Pierre', text: "Magnifique! Now I can bake again. The Oven is yours to use, friend." },
+      ],
+    },
     steps: [
       { id: 'meet_pierre', text: 'Meet Pierre', check: (gs) => gs.flags.met_pierre },
       { id: 'catch_1', text: 'Catch Mouse (1/5)', check: (gs) => (gs.flags.mouse_catches || 0) >= 1 },
@@ -676,6 +767,14 @@ export const QUESTS = {
     island: 'bakery',
     name: 'A Welcome Dinner',
     description: 'Pierre wants to host a dinner for everyone!',
+    dialogue: {
+      dinnerHosted: [
+        { speaker: 'Pierre', text: "Welcome, everyone! Tonight, we feast!" },
+        { speaker: '', text: "*Pierre prepares an incredible meal. Everyone gathers around the table.*" },
+        { speaker: '', text: "*Laughter, stories, and warm food fill the evening.*" },
+        { speaker: 'Pierre', text: "To friends — old and new. May our island grow ever more delicious!" },
+      ],
+    },
     steps: [
       { id: 'halibut', text: 'Bring 5 Halibut', check: (gs) => gs.getItemCount('halibut') >= 5 || gs.flags.dinner_hosted },
       { id: 'herring', text: 'Bring 5 Herring', check: (gs) => gs.getItemCount('herring') >= 5 || gs.flags.dinner_hosted },
@@ -694,12 +793,33 @@ export const QUESTS = {
       { id: 'enter', text: 'Enter the Cellar', check: (gs) => gs.flags.flame_stone_obtained },
     ],
     requiresDay: 7,
+    rewards: { flame_stone: 1 },
+    dialogue: {
+      cellarOpened: [
+        { speaker: 'Mouse', text: '"You want to know a secret? It will cost you 13 Bread."' },
+        { speaker: '', text: "*You hand over 13 loaves. The Mouse arranges them in a circle.*" },
+        { speaker: 'Mouse', text: '"I place this bread to remember those who defied the dreaded Symmetry."' },
+        { speaker: 'Mouse', text: '"Though they were branded Heretics, their defiance made us who we are today."' },
+        { speaker: 'Mouse', text: '"All of us owe them our gratitude. With this bounty, we remember and honor them."' },
+        { speaker: 'Mouse', text: '"And for you — you have my gratitude. I wasn\'t always a mouse, you know."' },
+        { speaker: '', text: "*The Mouse reveals a hidden door. In the cellar below, a red rune glows.*" },
+        { speaker: '', text: "*You receive a Flame Stone. Its warmth pulses in your hand.*" },
+      ],
+    },
   },
   forest_q1: {
     id: 'forest_q1',
     island: 'dense_forest',
     name: 'Learn to Log',
     description: 'Ashley wants to see what you can do with an axe.',
+    dialogue: {
+      meetAshley: [
+        { speaker: 'Ashley', text: "Hey there! Welcome to the forest. Name's Ashley." },
+        { speaker: 'Ashley', text: "I've been logging these trees for years. They grow back fast — don't worry about that." },
+        { speaker: 'Ashley', text: "Grab your axe and show me what you've got. Chop down 5 trees!" },
+        { speaker: '', text: "*A suspicious Squirrel watches from a nearby branch...*" },
+      ],
+    },
     steps: [
       { id: 'meet_ashley', text: 'Meet Ashley', check: (gs) => gs.flags.met_ashley },
       { id: 'chop_5', text: 'Chop 5 Trees (need Axe)', check: (gs) => gs.totalCollected('logs') >= 5 },
@@ -716,6 +836,12 @@ export const QUESTS = {
       { id: 'give_acorns', text: 'Give Acorns to Squirrel (0/100)', check: (gs) => (gs.flags.acorns_given || 0) >= 100 },
     ],
     requiresDay: 6,
+    dialogue: {
+      giveAcorns: [
+        { speaker: '', text: "*The Squirrel eyes your acorns greedily.*" },
+        { speaker: '', text: "*It scurries closer, waiting for you to share...*" },
+      ],
+    },
   },
   forest_q3: {
     id: 'forest_q3',
@@ -728,12 +854,26 @@ export const QUESTS = {
       { id: 'stone', text: 'Receive the Frost Stone', check: (gs) => gs.flags.frost_stone_obtained },
     ],
     requiresDay: 7,
+    rewards: { frost_stone: 1 },
   },
   rocks_q1: {
     id: 'rocks_q1',
     island: 'rocks',
     name: 'Make the Seals Dance',
     description: "Timmy's friends haven't come out to play. Can you help?",
+    dialogue: {
+      meetTimmy: [
+        { speaker: 'Timmy', text: "Hi! I'm Timmy. My friends haven't come out today..." },
+        { speaker: 'Timmy', text: "The Seals love fish! If you bring some, maybe they'll come play!" },
+        { speaker: '', text: "*Timmy looks out at the water hopefully.*" },
+      ],
+      sealsDance: [
+        { speaker: '', text: "*Timmy throws the fish into the water. Three Seals burst from the waves!*" },
+        { speaker: '', text: "*The Seals spin, splash, and put on a magnificent show!*" },
+        { speaker: 'Timmy', text: "They're dancing! Thank you so much!" },
+        { speaker: 'Timmy', text: "Here — I found this on the rocks. It's really pretty, isn't it?" },
+      ],
+    },
     steps: [
       { id: 'meet_timmy', text: 'Meet Timmy', check: (gs) => gs.flags.met_timmy },
       { id: 'feed_seals', text: 'Give Timmy 3 Fish (any type)', check: (gs) => gs.flags.seals_dancing },
@@ -765,6 +905,7 @@ export const QUESTS = {
       { id: 'trout', text: 'Give 3 Golden Trout to Timmy', check: (gs) => gs.flags.shadow_stone_obtained },
     ],
     requiresDay: 7,
+    rewards: { shadow_stone: 1 },
   },
 
   // ── Tier 2 cont. + Stub Quests ──
@@ -774,6 +915,14 @@ export const QUESTS = {
     island: 'granary',
     name: 'Tour the Island',
     description: 'Take Raven on a tour to meet everyone.',
+    dialogue: {
+      meetRaven: [
+        { speaker: 'Raven', text: "...You're here. I wasn't expecting visitors." },
+        { speaker: 'Raven', text: "I'm Raven. This old windmill is all I have left of my family's granary." },
+        { speaker: 'Raven', text: "If you help me repair it, I can turn your Wheat into proper Grain." },
+        { speaker: 'Raven', text: "But first... would you show me around? I'd like to meet the others." },
+      ],
+    },
     steps: [
       { id: 'meet_raven', text: 'Meet Raven', check: (gs) => gs.flags.met_raven },
       { id: 'tour', text: 'Visit 3 other NPCs with Raven', check: (gs) => (gs.flags.raven_tour_count || 0) >= 3 },
@@ -797,6 +946,13 @@ export const QUESTS = {
     island: 'market_square',
     name: 'A Simple Request',
     description: "Theodore wants 5 of anything. Even sticks!",
+    dialogue: {
+      meetMerchants: [
+        { speaker: 'Alvin', text: "Welcome to the Market Square! I'm Alvin — I'll buy anything you've got." },
+        { speaker: 'Simon', text: "And I'm Simon — I sell what others have brought. Browse freely!" },
+        { speaker: 'Theodore', text: "And I'm Theodore. I make requests — fulfill them for double the reward!" },
+      ],
+    },
     steps: [
       { id: 'meet_merchants', text: 'Meet the Merchants', check: (gs) => gs.flags.met_merchants },
       { id: 'give_5', text: 'Give Theodore 5 of anything', check: (gs) => gs.flags.first_request_done },
@@ -831,6 +987,14 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 6,
+    rewards: { mermaid_stone: 1 },
+    dialogue: {
+      meetMermaid: [
+        { speaker: 'Mermaid', text: "Hello, land-walker. We've been watching your islands grow." },
+        { speaker: 'Mermaid', text: "Take this Mermaid Stone. It will let you breathe beneath the waves." },
+        { speaker: 'Mermaid', text: "Swim south to the Altar. There is something there you should see." },
+      ],
+    },
   },
   faerie_q1: {
     id: 'faerie_q1',
@@ -843,6 +1007,14 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 6,
+    rewards: { faerie_stone: 1 },
+    dialogue: {
+      meetFaerie: [
+        { speaker: 'Faerie', text: "*A tiny glowing figure flutters before you.*" },
+        { speaker: 'Faerie', text: "Take this Faerie Stone! It opens the way to our realm." },
+        { speaker: 'Faerie', text: "Step through the portal when you're ready. We'll be waiting!" },
+      ],
+    },
   },
   auction_q1: {
     id: 'auction_q1',
@@ -854,6 +1026,12 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 7,
+    dialogue: {
+      meetAuctioneer: [
+        { speaker: 'Auctioneer', text: "Step right up! Today we have a most Mysterious Painting for auction." },
+        { speaker: 'Auctioneer', text: "The bidding starts at 20 Coins. Do I hear 21?" },
+      ],
+    },
   },
   mine_q1: {
     id: 'mine_q1',
@@ -866,6 +1044,14 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 8,
+    rewards: { coins: 20 },
+    dialogue: {
+      meetMiner: [
+        { speaker: 'Miner', text: "Ah, fresh blood! The mine's been lonely." },
+        { speaker: 'Miner', text: "Here — take this Pickaxe and Helmet. You'll need the light down there." },
+        { speaker: 'Miner', text: "The tunnels run under all the islands. Who knows what you'll find?" },
+      ],
+    },
   },
   mystery_q1: {
     id: 'mystery_q1',
@@ -878,6 +1064,15 @@ export const QUESTS = {
     ],
     completesDay: true,
     requiresDay: 9,
+    rewards: { silent_stone: 1 },
+    dialogue: {
+      climb: [
+        { speaker: '', text: "*You begin the long climb up Mount Mystery.*" },
+        { speaker: '', text: "*The wind howls. Clouds part to reveal an ancient stone at the peak.*" },
+        { speaker: '', text: "*You touch the stone and feel... silence. Pure, absolute silence.*" },
+        { speaker: '', text: "*The Silent Stone is yours. But what does it mean?*" },
+      ],
+    },
   },
   mystery_q2: {
     id: 'mystery_q2',
@@ -898,6 +1093,16 @@ export const QUESTS = {
 // If the Quest Editor has saved an override to localStorage, fold it in
 // now so every consumer that imports QUESTS sees the edited version.
 applyOverrideInPlace(QUESTS);
+
+// Read a named dialogue array from a quest's dialogue bag. Quest-specific
+// lines live on the quest itself so each quest can own its associated
+// content; shared lines (turtle daily, generic chatter) stay in DIALOGUES.
+// Returns an array of { speaker, text } lines, or null if unknown.
+export function getQuestDialogue(questId, key) {
+  const q = QUESTS[questId];
+  const d = q?.dialogue?.[key];
+  return Array.isArray(d) ? d : null;
+}
 
 // ── Island unlock rules (prerequisite system) ──
 export const ISLAND_UNLOCK_RULES = {
@@ -942,39 +1147,9 @@ export const DIALOGUES = {
     { speaker: 'Turtle', text: "The horizon holds more surprises. I can feel it in the currents." },
     { speaker: 'Turtle', text: "Sleep well, friend." },
   ],
-  dog_first: [
-    { speaker: '', text: '*A friendly dog bounds towards you, tail wagging!*' },
-    { speaker: '', text: "*The dog sniffs you, decides you're okay, and runs off towards Your Home.*" },
-    { speaker: '', text: 'The dog seems to want to play fetch! Throw it a stick.' },
-  ],
-  dog_fetch: [
-    { speaker: '', text: '*You throw a stick! The dog runs after it...*' },
-    { speaker: '', text: "*...and completely ignores the stick. Instead, it digs a hole and comes back with something.*" },
-    { speaker: '', text: "The dog found a Broken Spade! Maybe you can fix this." },
-  ],
-  sally_first: [
-    { speaker: 'Sally', text: "Oh! Hello there! I didn't expect to see anyone else out here." },
-    { speaker: 'Sally', text: "I'm Sally. I've been taking care of these sheep for... well, a while now." },
-    { speaker: 'Sally', text: "Here, take these shears. You'll need them to get wool from the sheep." },
-    { speaker: 'Sally', text: "If you could help me make some beds, that would be amazing! I have some driftwood saved up." },
-  ],
-  maria_first: [
-    { speaker: 'Maria', text: "Hey! Welcome to the pier - or what's left of it, anyway." },
-    { speaker: 'Maria', text: "I'm Maria. My father and I have been here since... well, we don't remember." },
-    { speaker: 'Maria', text: "He's a bit... eccentric. But he has a good fishing line you could use!" },
-    { speaker: 'Maria', text: "Talk to him and I'll teach you how to fish." },
-  ],
-  old_man_first: [
-    { speaker: 'Old Man', text: "Eh? Another one, washed up by the tides..." },
-    { speaker: 'Old Man', text: "The islands... they weren't always like this, you know. Scattered across the sea..." },
-    { speaker: 'Old Man', text: "Here. Take my fishing line. I don't need it anymore. *He hands you a weathered line.*" },
-    { speaker: 'Old Man', text: "Catch enough fish and we'll have ourselves a proper feast!" },
-  ],
-  fire_lit: [
-    { speaker: '', text: '*The fire crackles to life, sending sparks into the evening sky.*' },
-    { speaker: '', text: '*In the distance, you see the Turtle stir. It seems drawn to the warmth.*' },
-    { speaker: '', text: 'You can now Talk to the Turtle to end the day.' },
-  ],
+  // Quest-specific lines have migrated onto their QUESTS entries.
+  // Only truly-shared dialogues remain here: turtle daily-summary lines and
+  // the generic fallback.
   turtle_day3: [
     { speaker: 'You', text: "I met someone new today. This ocean is full of surprises." },
     { speaker: 'Turtle', text: "People find each other, even out here. The currents bring what's needed." },
@@ -994,121 +1169,5 @@ export const DIALOGUES = {
     { speaker: 'You', text: "Another day, another island. The journey continues." },
     { speaker: 'Turtle', text: "Every day brings us closer to something. I can feel it." },
     { speaker: 'Turtle', text: "Rest now. The sea will carry us forward." },
-  ],
-  dog_fetch_2: [
-    { speaker: '', text: '*You throw another stick! The dog runs after it...*' },
-    { speaker: '', text: "*...and once again ignores the stick. More digging. The dog returns with a Strange Stick.*" },
-    { speaker: '', text: "This stick is glowing faintly. Maybe someone knows what it is?" },
-  ],
-  sally_magic_wand: [
-    { speaker: 'Sally', text: "What's that you've got there? Let me see..." },
-    { speaker: '', text: "*Sally touches the Strange Stick and — POOF! Her hair turns from purple to brown.*" },
-    { speaker: 'Sally', text: "Whoa! That's... that's a Magic Wand! It reverses things!" },
-    { speaker: 'Sally', text: "Here, you keep it. I think you'll find more use for it than I will." },
-  ],
-  old_man_hammer: [
-    { speaker: 'Old Man', text: "A hammer? Sure, I've got a spare one somewhere around here..." },
-    { speaker: 'Old Man', text: "*He rummages through a pile of old tools and produces a hammer and some nails.*" },
-    { speaker: 'Old Man', text: "Take good care of these. Tools are hard to come by out here." },
-  ],
-  wheat_harvest: [
-    { speaker: '', text: "*The golden wheat sways in the breeze, ready to be harvested.*" },
-    { speaker: '', text: "*You carefully gather the wheat. The Dog barks happily at your side.*" },
-    { speaker: '', text: "First harvest! The seeds of your labor have borne fruit." },
-  ],
-  cooking_lesson: [
-    { speaker: 'Maria', text: "Now that you've caught some fish, let me show you how to cook them properly." },
-    { speaker: 'Maria', text: "Take them to the fire pit on Your Home island. Season with seaweed and cook over the flames." },
-    { speaker: '', text: "*The aroma of freshly cooked fish fills the air.*" },
-    { speaker: 'Maria', text: "Not bad for a beginner! You can cook fish at the fire pit whenever you like now." },
-  ],
-  // Tier 2 dialogues
-  pierre_first: [
-    { speaker: 'Pierre', text: "Ah, bonjour! Welcome to my Bakery... or what's left of it." },
-    { speaker: 'Pierre', text: "That accursed Mouse has stolen my flour! Without it, I cannot bake." },
-    { speaker: 'Pierre', text: "Please, catch that little thief! He's hiding somewhere on this island." },
-  ],
-  mouse_catch: [
-    { speaker: '', text: "*You corner the Mouse! It squeaks indignantly and drops a handful of flour.*" },
-    { speaker: 'Mouse', text: "'Squeak!' (The Mouse darts away to a new hiding spot.)" },
-  ],
-  mouse_final: [
-    { speaker: '', text: "*The Mouse finally gives up. It sits down and pushes the flour bag toward you.*" },
-    { speaker: 'Mouse', text: '"...Fine. You win. But know this:"' },
-    { speaker: 'Mouse', text: '"This mosaic of islands hides more mysteries than you know. Look below for answers."' },
-    { speaker: 'Pierre', text: "Magnifique! Now I can bake again. The Oven is yours to use, friend." },
-  ],
-  mouse_cellar: [
-    { speaker: 'Mouse', text: '"You want to know a secret? It will cost you 13 Bread."' },
-    { speaker: '', text: "*You hand over 13 loaves. The Mouse arranges them in a circle.*" },
-    { speaker: 'Mouse', text: '"I place this bread to remember those who defied the dreaded Symmetry."' },
-    { speaker: 'Mouse', text: '"Though they were branded Heretics, their defiance made us who we are today."' },
-    { speaker: 'Mouse', text: '"All of us owe them our gratitude. With this bounty, we remember and honor them."' },
-    { speaker: 'Mouse', text: '"And for you — you have my gratitude. I wasn\'t always a mouse, you know."' },
-    { speaker: '', text: "*The Mouse reveals a hidden door. In the cellar below, a red rune glows.*" },
-    { speaker: '', text: "*You receive a Flame Stone. Its warmth pulses in your hand.*" },
-  ],
-  ashley_first: [
-    { speaker: 'Ashley', text: "Hey there! Welcome to the forest. Name's Ashley." },
-    { speaker: 'Ashley', text: "I've been logging these trees for years. They grow back fast — don't worry about that." },
-    { speaker: 'Ashley', text: "Grab your axe and show me what you've got. Chop down 5 trees!" },
-    { speaker: '', text: "*A suspicious Squirrel watches from a nearby branch...*" },
-  ],
-  squirrel_acorns: [
-    { speaker: '', text: "*The Squirrel eyes your acorns greedily.*" },
-    { speaker: '', text: "*It scurries closer, waiting for you to share...*" },
-  ],
-  timmy_first: [
-    { speaker: 'Timmy', text: "Hi! I'm Timmy. My friends haven't come out today..." },
-    { speaker: 'Timmy', text: "The Seals love fish! If you bring some, maybe they'll come play!" },
-    { speaker: '', text: "*Timmy looks out at the water hopefully.*" },
-  ],
-  seals_dance: [
-    { speaker: '', text: "*Timmy throws the fish into the water. Three Seals burst from the waves!*" },
-    { speaker: '', text: "*The Seals spin, splash, and put on a magnificent show!*" },
-    { speaker: 'Timmy', text: "They're dancing! Thank you so much!" },
-    { speaker: 'Timmy', text: "Here — I found this on the rocks. It's really pretty, isn't it?" },
-  ],
-  dinner_scene: [
-    { speaker: 'Pierre', text: "Welcome, everyone! Tonight, we feast!" },
-    { speaker: '', text: "*Pierre prepares an incredible meal. Everyone gathers around the table.*" },
-    { speaker: '', text: "*Laughter, stories, and warm food fill the evening.*" },
-    { speaker: 'Pierre', text: "To friends — old and new. May our island grow ever more delicious!" },
-  ],
-  raven_first: [
-    { speaker: 'Raven', text: "...You're here. I wasn't expecting visitors." },
-    { speaker: 'Raven', text: "I'm Raven. This old windmill is all I have left of my family's granary." },
-    { speaker: 'Raven', text: "If you help me repair it, I can turn your Wheat into proper Grain." },
-    { speaker: 'Raven', text: "But first... would you show me around? I'd like to meet the others." },
-  ],
-  merchants_first: [
-    { speaker: 'Alvin', text: "Welcome to the Market Square! I'm Alvin — I'll buy anything you've got." },
-    { speaker: 'Simon', text: "And I'm Simon — I sell what others have brought. Browse freely!" },
-    { speaker: 'Theodore', text: "And I'm Theodore. I make requests — fulfill them for double the reward!" },
-  ],
-  mermaid_first: [
-    { speaker: 'Mermaid', text: "Hello, land-walker. We've been watching your islands grow." },
-    { speaker: 'Mermaid', text: "Take this Mermaid Stone. It will let you breathe beneath the waves." },
-    { speaker: 'Mermaid', text: "Swim south to the Altar. There is something there you should see." },
-  ],
-  faerie_first: [
-    { speaker: 'Faerie', text: "*A tiny glowing figure flutters before you.*" },
-    { speaker: 'Faerie', text: "Take this Faerie Stone! It opens the way to our realm." },
-    { speaker: 'Faerie', text: "Step through the portal when you're ready. We'll be waiting!" },
-  ],
-  auctioneer_first: [
-    { speaker: 'Auctioneer', text: "Step right up! Today we have a most Mysterious Painting for auction." },
-    { speaker: 'Auctioneer', text: "The bidding starts at 20 Coins. Do I hear 21?" },
-  ],
-  miner_first: [
-    { speaker: 'Miner', text: "Ah, fresh blood! The mine's been lonely." },
-    { speaker: 'Miner', text: "Here — take this Pickaxe and Helmet. You'll need the light down there." },
-    { speaker: 'Miner', text: "The tunnels run under all the islands. Who knows what you'll find?" },
-  ],
-  mountain_climb: [
-    { speaker: '', text: "*You begin the long climb up Mount Mystery.*" },
-    { speaker: '', text: "*The wind howls. Clouds part to reveal an ancient stone at the peak.*" },
-    { speaker: '', text: "*You touch the stone and feel... silence. Pure, absolute silence.*" },
-    { speaker: '', text: "*The Silent Stone is yours. But what does it mean?*" },
   ],
 };

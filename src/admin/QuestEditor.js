@@ -11,7 +11,6 @@ export class QuestEditor {
     this.resources = resources;
     this.dialogues = dialogues;
     this.allIslandIds = Object.keys(islands).concat(['turtle']); // turtle kept as an unlock flag even without an ISLANDS entry
-    this.allDialogueKeys = Object.keys(dialogues);
 
     // Build the editable model from the source QUESTS.
     this.model = {};
@@ -187,10 +186,11 @@ export class QuestEditor {
     this.detailEl.appendChild(this.makeSectionTitle('Rewards'));
     this.detailEl.appendChild(this.makeRewardsEditor(m));
 
-    // Dialogue refs
+    // Dialogue bag — each quest owns named dialogue moments (onComplete,
+    // meetPierre, mouseFinal, etc.) keyed arbitrarily. Lines are inline
+    // arrays.
     this.detailEl.appendChild(this.makeSectionTitle('Dialogue'));
-    this.detailEl.appendChild(this.makeDialoguePicker('On Start', m.dialogue.onStart, v => { m.dialogue.onStart = v; this.markDirty(); }));
-    this.detailEl.appendChild(this.makeDialoguePicker('On Complete', m.dialogue.onComplete, v => { m.dialogue.onComplete = v; this.markDirty(); }));
+    this.detailEl.appendChild(this.makeDialogueBagEditor(m));
 
     // Steps
     this.detailEl.appendChild(this.makeSectionTitle('Steps'));
@@ -342,26 +342,83 @@ export class QuestEditor {
     return field;
   }
 
-  makeDialoguePicker(label, currentValue, onChange) {
+  makeDialogueBagEditor(m) {
     const field = document.createElement('div');
     field.className = 'field';
-    field.innerHTML = `<label>${escapeHtml(label)}</label>`;
-    const row = document.createElement('div');
-    row.className = 'dialog-picker';
 
-    const sel = document.createElement('select');
-    const emptyOpt = document.createElement('option');
-    emptyOpt.value = ''; emptyOpt.textContent = '(none)';
-    sel.appendChild(emptyOpt);
-    for (const key of this.allDialogueKeys) {
-      const opt = document.createElement('option');
-      opt.value = key; opt.textContent = key;
-      if (key === currentValue) opt.selected = true;
-      sel.appendChild(opt);
-    }
-    sel.addEventListener('change', () => onChange(sel.value || null));
-    row.appendChild(sel);
-    field.appendChild(row);
+    const rerender = () => {
+      field.innerHTML = '';
+      const keys = Object.keys(m.dialogue);
+      for (const key of keys) {
+        const val = m.dialogue[key];
+        const row = document.createElement('div');
+        row.className = 'step';
+
+        const head = document.createElement('div');
+        head.className = 'step-head';
+        head.innerHTML = `
+          <input type="text" style="flex:0 0 180px; font-family: ui-monospace, monospace;" />
+          <div style="flex:1; color:var(--muted); font-size:11px;"></div>
+          <div class="controls"><button class="danger" title="Remove">✕</button></div>
+        `;
+        const [keyIn] = head.querySelectorAll('input');
+        const countEl = head.querySelector('div.controls').previousElementSibling;
+        const rmBtn = head.querySelector('button');
+        keyIn.value = key;
+        countEl.textContent = Array.isArray(val) ? `${val.length} lines` : '(empty)';
+        row.appendChild(head);
+
+        const ta = document.createElement('textarea');
+        ta.style.minHeight = '80px';
+        ta.style.fontFamily = 'ui-monospace, Menlo, Consolas, monospace';
+        ta.style.fontSize = '11px';
+        ta.value = Array.isArray(val) ? JSON.stringify(val, null, 2) : '[]';
+        row.appendChild(ta);
+
+        keyIn.addEventListener('change', () => {
+          const newKey = keyIn.value.trim();
+          if (!newKey || newKey === key) { keyIn.value = key; return; }
+          if (m.dialogue[newKey]) { keyIn.value = key; this.toast(`Key "${newKey}" already exists`); return; }
+          m.dialogue[newKey] = m.dialogue[key];
+          delete m.dialogue[key];
+          this.markDirty();
+          rerender();
+        });
+
+        ta.addEventListener('input', () => {
+          try {
+            const parsed = JSON.parse(ta.value);
+            if (Array.isArray(parsed)) {
+              m.dialogue[keyIn.value.trim() || key] = parsed;
+              countEl.textContent = `${parsed.length} lines`;
+              this.markDirty();
+            }
+          } catch {}
+        });
+
+        rmBtn.addEventListener('click', () => {
+          delete m.dialogue[keyIn.value.trim() || key];
+          this.markDirty();
+          rerender();
+        });
+
+        field.appendChild(row);
+      }
+
+      const add = document.createElement('button');
+      add.className = 'add-step';
+      add.textContent = '+ Add Dialogue Moment';
+      add.addEventListener('click', () => {
+        let newKey = 'moment_1';
+        let i = 2;
+        while (m.dialogue[newKey]) newKey = `moment_${i++}`;
+        m.dialogue[newKey] = [];
+        this.markDirty();
+        rerender();
+      });
+      field.appendChild(add);
+    };
+    rerender();
     return field;
   }
 
@@ -538,10 +595,7 @@ function normalizeQuest(id, q) {
     completesDay: !!q.completesDay,
     hidden: !!q.hidden,
     rewards: q.rewards ? { ...q.rewards } : {},
-    dialogue: {
-      onStart: q.dialogue?.onStart || null,
-      onComplete: q.dialogue?.onComplete || null,
-    },
+    dialogue: q.dialogue ? deepCopyDialogue(q.dialogue) : {},
     steps: (q.steps || []).map((s, i) => ({
       id: s.id || `step_${i + 1}`,
       text: s.text || '',
@@ -561,7 +615,7 @@ function emptyQuest(id) {
     completesDay: false,
     hidden: false,
     rewards: {},
-    dialogue: { onStart: null, onComplete: null },
+    dialogue: {},
     steps: [],
   };
 }
@@ -599,10 +653,21 @@ function formatQuestAsJs(m) {
     lines.push(rewardLines.join(',\n'));
     lines.push(`${pad}},`);
   }
-  if (m.dialogue.onStart || m.dialogue.onComplete) {
+  const dialogueKeys = Object.keys(m.dialogue);
+  if (dialogueKeys.length) {
     lines.push(`${pad}dialogue: {`);
-    if (m.dialogue.onStart) lines.push(`${pad}  onStart: ${jsStr(m.dialogue.onStart)},`);
-    if (m.dialogue.onComplete) lines.push(`${pad}  onComplete: ${jsStr(m.dialogue.onComplete)},`);
+    for (const key of dialogueKeys) {
+      const val = m.dialogue[key];
+      if (Array.isArray(val)) {
+        lines.push(`${pad}  ${jsKey(key)}: [`);
+        for (const line of val) {
+          lines.push(`${pad}    { speaker: ${jsStr(line.speaker || '')}, text: ${jsStr(line.text || '')} },`);
+        }
+        lines.push(`${pad}  ],`);
+      } else if (typeof val === 'string') {
+        lines.push(`${pad}  ${jsKey(key)}: ${jsStr(val)},`);
+      }
+    }
     lines.push(`${pad}},`);
   }
   lines.push(`${pad}steps: [`);
@@ -613,6 +678,18 @@ function formatQuestAsJs(m) {
   lines.push(`${pad}],`);
   lines.push('  },');
   return lines.join('\n');
+}
+
+function deepCopyDialogue(d) {
+  const out = {};
+  for (const [k, v] of Object.entries(d)) {
+    if (Array.isArray(v)) {
+      out[k] = v.map(line => ({ speaker: line.speaker || '', text: line.text || '' }));
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
 }
 
 function jsStr(s) {

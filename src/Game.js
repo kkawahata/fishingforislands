@@ -4,7 +4,7 @@ import { GameState } from './GameState.js';
 import { World } from './World.js';
 import { Player } from './Player.js';
 import { UI } from './UI.js';
-import { DIALOGUES, RESOURCES, ISLANDS, ISLAND_GRID, ALL_FISH_IDS, ISLAND_UNLOCK_RULES, MAX_FISH_PER_DAY } from './data.js';
+import { DIALOGUES, RESOURCES, ISLANDS, ISLAND_GRID, ALL_FISH_IDS, ISLAND_UNLOCK_RULES, MAX_FISH_PER_DAY, getQuestDialogue } from './data.js';
 
 export class Game {
   constructor() {
@@ -392,7 +392,7 @@ export class Game {
           this.state.flags.fire_lit = true;
           this.world.buildIslands(this.state);
           this.world.spawnDailyResources(this.state);
-          this._showDialogueSequence(DIALOGUES.fire_lit, () => this._refreshUI());
+          this._showDialogueSequence(getQuestDialogue('home_q1', 'onComplete'), () => this._refreshUI());
           this._refreshUI();
         },
       });
@@ -404,7 +404,7 @@ export class Game {
       const hasFish = ALL_FISH_IDS.some(id => this.state.hasItem(id));
       if (hasFish) {
         this.state.flags.cooked_fish = true;
-        this._showDialogueSequence(DIALOGUES.cooking_lesson, () => {
+        this._showDialogueSequence(getQuestDialogue('pier_q2', 'cookFirst'), () => {
           this.ui.notify('Learned to cook fish!');
           this._refreshUI();
         });
@@ -467,7 +467,7 @@ export class Game {
   _handleDog() {
     if (!this.state.flags.met_dog) {
       this.state.flags.met_dog = true;
-      this._showDialogueSequence(DIALOGUES.dog_first, () => {
+      this._showDialogueSequence(getQuestDialogue('wheat_q1', 'meetDog'), () => {
         this._refreshUI();
       });
       return;
@@ -477,7 +477,7 @@ export class Game {
       this.state.removeItem('sticks', 1);
       this.state.flags.threw_stick = true;
       this.state.addItem('broken_spade', 1);
-      this._showDialogueSequence(DIALOGUES.dog_fetch, () => {
+      this._showDialogueSequence(getQuestDialogue('wheat_q1', 'fetchSticks'), () => {
         this._refreshUI();
       });
       return;
@@ -489,7 +489,7 @@ export class Game {
       this.state.removeItem('sticks', 1);
       this.state.flags.found_strange_stick = true;
       this.state.addItem('strange_stick', 1);
-      this._showDialogueSequence(DIALOGUES.dog_fetch_2, () => {
+      this._showDialogueSequence(getQuestDialogue('wheat_q2', 'fetchSticksAgain'), () => {
         this._refreshUI();
       });
       return;
@@ -510,7 +510,7 @@ export class Game {
     if (!this.state.flags.met_sally) {
       this.state.flags.met_sally = true;
       this.state.addItem('shears', 1);
-      this._showDialogueSequence(DIALOGUES.sally_first, () => {
+      this._showDialogueSequence(getQuestDialogue('sheep_q1', 'meetSally'), () => {
         this.ui.notify('Received Shears from Sally!');
         // Add driftwood (Sally's contribution)
         this.state.addItem('driftwood', 6);
@@ -524,7 +524,7 @@ export class Game {
     if (this.state.hasItem('strange_stick')) {
       this.state.removeItem('strange_stick', 1);
       this.state.addItem('magic_wand', 1);
-      this._showDialogueSequence(DIALOGUES.sally_magic_wand, () => {
+      this._showDialogueSequence(getQuestDialogue('wheat_q2', 'magicWandRevealed'), () => {
         this.ui.notify('Received Magic Wand!');
         this._refreshUI();
       });
@@ -539,7 +539,7 @@ export class Game {
   _handleMaria() {
     if (!this.state.flags.met_maria) {
       this.state.flags.met_maria = true;
-      this._showDialogueSequence(DIALOGUES.maria_first, () => {
+      this._showDialogueSequence(getQuestDialogue('pier_q1', 'meetMaria'), () => {
         this._refreshUI();
       });
       return;
@@ -587,7 +587,7 @@ export class Game {
     if (!this.state.flags.met_old_man) {
       this.state.flags.met_old_man = true;
       this.state.addItem('old_mans_line', 1);
-      this._showDialogueSequence(DIALOGUES.old_man_first, () => {
+      this._showDialogueSequence(getQuestDialogue('pier_q1', 'meetOldMan'), () => {
         this.ui.notify("Received Old Man's Line!");
         this._refreshUI();
       });
@@ -597,7 +597,7 @@ export class Game {
     // Give hammer if needed for sheep quest and player doesn't have one yet
     if (!this.state.hasItem('hammer') && this.state.flags.met_sally) {
       this.state.addItem('hammer', 1);
-      this._showDialogueSequence(DIALOGUES.old_man_hammer, () => {
+      this._showDialogueSequence(getQuestDialogue('pier_q2', 'hammerGiven'), () => {
         this.ui.notify('Received Hammer & Nails!');
         this._refreshUI();
       });
@@ -671,7 +671,7 @@ export class Game {
           this.state.flags.first_harvest_done = true;
           if (!this.state.flags._first_harvest_shown) {
             this.state.flags._first_harvest_shown = true;
-            this._showDialogueSequence(DIALOGUES.wheat_harvest);
+            this._showDialogueSequence(getQuestDialogue('wheat_q3', 'onFirstHarvest'));
           }
           this.ui.notify(`Harvested 1 Wheat and ${seedsPerPlant} Seeds!`);
           this.state.flags.wheat_planted_day = this.state.day;
@@ -723,7 +723,7 @@ export class Game {
   _handlePierre() {
     if (!this.state.flags.met_pierre) {
       this.state.flags.met_pierre = true;
-      this._showDialogueSequence(DIALOGUES.pierre_first, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('bakery_q1', 'meetPierre'), () => this._refreshUI());
       return;
     }
     // Dinner quest check
@@ -733,7 +733,7 @@ export class Game {
       this.state.removeItem('herring', 5);
       this.state.removeItem('bread', 10);
       this.state.flags.dinner_hosted = true;
-      this._showDialogueSequence(DIALOGUES.dinner_scene, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('bakery_q2', 'dinnerHosted'), () => this._refreshUI());
       return;
     }
     this._showDialogueSequence([
@@ -748,7 +748,7 @@ export class Game {
       this.state.flags.cellar_opened = true;
       this.state.flags.flame_stone_obtained = true;
       this.state.addItem('flame_stone', 1);
-      this._showDialogueSequence(DIALOGUES.mouse_cellar, () => {
+      this._showDialogueSequence(getQuestDialogue('bakery_q3', 'cellarOpened'), () => {
         this.ui.notify('Received Flame Stone!');
         this._refreshUI();
       });
@@ -759,14 +759,14 @@ export class Game {
       this.state.flags.mouse_catches = (this.state.flags.mouse_catches || 0) + 1;
       if (this.state.flags.mouse_catches >= 5) {
         this.state.mouseIsland = 'bakery'; // returns home
-        this._showDialogueSequence(DIALOGUES.mouse_final, () => {
+        this._showDialogueSequence(getQuestDialogue('bakery_q1', 'mouseFinal'), () => {
           this.world.buildIslands(this.state);
           this.world.spawnDailyResources(this.state);
           this._refreshUI();
         });
       } else {
         this.state.moveMouseToFarthest();
-        this._showDialogueSequence(DIALOGUES.mouse_catch, () => {
+        this._showDialogueSequence(getQuestDialogue('bakery_q1', 'mouseCaught'), () => {
           this.world.buildIslands(this.state);
           this.world.spawnDailyResources(this.state);
           this._refreshUI();
@@ -782,7 +782,7 @@ export class Game {
   _handleAshley() {
     if (!this.state.flags.met_ashley) {
       this.state.flags.met_ashley = true;
-      this._showDialogueSequence(DIALOGUES.ashley_first, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('forest_q1', 'meetAshley'), () => this._refreshUI());
       return;
     }
     this._showDialogueSequence([
@@ -815,7 +815,7 @@ export class Game {
       const count = this.state.getItemCount('acorns');
       this.state.removeItem('acorns', count);
       this.state.flags.acorns_given = (this.state.flags.acorns_given || 0) + count;
-      this._showDialogueSequence(DIALOGUES.squirrel_acorns, () => {
+      this._showDialogueSequence(getQuestDialogue('forest_q2', 'giveAcorns'), () => {
         this.ui.notify(`Gave ${count} Acorns to Squirrel! (${this.state.flags.acorns_given}/100)`);
         this._refreshUI();
       });
@@ -836,7 +836,7 @@ export class Game {
   _handleTimmy() {
     if (!this.state.flags.met_timmy) {
       this.state.flags.met_timmy = true;
-      this._showDialogueSequence(DIALOGUES.timmy_first, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('rocks_q1', 'meetTimmy'), () => this._refreshUI());
       return;
     }
     // Hidden quest: 3 Golden Trout
@@ -881,7 +881,7 @@ export class Game {
       this.state.removeItem(anyFish, 3);
       this.state.flags.seals_dancing = true;
       this.state.addItem('pristine_shell', 1);
-      this._showDialogueSequence(DIALOGUES.seals_dance, () => {
+      this._showDialogueSequence(getQuestDialogue('rocks_q1', 'sealsDance'), () => {
         this.ui.notify('Received Pristine Shell!');
         this._refreshUI();
       });
@@ -901,7 +901,7 @@ export class Game {
   _handleRaven() {
     if (!this.state.flags.met_raven) {
       this.state.flags.met_raven = true;
-      this._showDialogueSequence(DIALOGUES.raven_first, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('granary_q1', 'meetRaven'), () => this._refreshUI());
       return;
     }
     // Tour quest: visiting other NPCs with Raven (simplified — talk to Raven after meeting others)
@@ -960,7 +960,7 @@ export class Game {
   _handleTheodore() {
     if (!this.state.flags.met_merchants) {
       this.state.flags.met_merchants = true;
-      this._showDialogueSequence(DIALOGUES.merchants_first, () => this._refreshUI());
+      this._showDialogueSequence(getQuestDialogue('market_q1', 'meetMerchants'), () => this._refreshUI());
       return;
     }
     // First request: 5 of anything
@@ -1009,7 +1009,7 @@ export class Game {
   _handleMermaid() {
     if (!this.state.hasItem('mermaid_stone')) {
       this.state.addItem('mermaid_stone', 1);
-      this._showDialogueSequence(DIALOGUES.mermaid_first, () => {
+      this._showDialogueSequence(getQuestDialogue('mermaid_q1', 'meetMermaid'), () => {
         this.ui.notify('Received Mermaid Stone!');
         this._refreshUI();
       });
@@ -1032,7 +1032,7 @@ export class Game {
   _handleFaerie() {
     if (!this.state.hasItem('faerie_stone')) {
       this.state.addItem('faerie_stone', 1);
-      this._showDialogueSequence(DIALOGUES.faerie_first, () => {
+      this._showDialogueSequence(getQuestDialogue('faerie_q1', 'meetFaerie'), () => {
         this.ui.notify('Received Faerie Stone!');
         this._refreshUI();
       });
@@ -1057,7 +1057,7 @@ export class Game {
       if (this.state.hasItem('coins', 21)) {
         this.state.removeItem('coins', 21);
         this.state.flags.won_auction = true;
-        this._showDialogueSequence(DIALOGUES.auctioneer_first.concat([
+        this._showDialogueSequence(getQuestDialogue('auction_q1', 'meetAuctioneer').concat([
           { speaker: 'Auctioneer', text: "Sold! The Mysterious Painting is yours!" },
           { speaker: '', text: "*A beautiful, enigmatic painting. It seems to shift when you look away.*" },
         ]), () => {
@@ -1065,7 +1065,7 @@ export class Game {
           this._refreshUI();
         });
       } else {
-        this._showDialogueSequence(DIALOGUES.auctioneer_first.concat([
+        this._showDialogueSequence(getQuestDialogue('auction_q1', 'meetAuctioneer').concat([
           { speaker: 'Auctioneer', text: "Going once... going twice... SOLD to someone else for 20 Coins!" },
           { speaker: '', text: "*You'll need 21 Coins to win next time.*" },
         ]));
@@ -1080,7 +1080,7 @@ export class Game {
   _handleMiner() {
     if (!this.state.flags.has_mining_tools) {
       this.state.flags.has_mining_tools = true;
-      this._showDialogueSequence(DIALOGUES.miner_first, () => {
+      this._showDialogueSequence(getQuestDialogue('mine_q1', 'meetMiner'), () => {
         this.ui.notify('Received Pickaxe and Helmet!');
         this._refreshUI();
       });
@@ -1108,7 +1108,7 @@ export class Game {
     if (!this.state.flags.climbed_mountain) {
       this.state.flags.climbed_mountain = true;
       this.state.addItem('silent_stone', 1);
-      this._showDialogueSequence(DIALOGUES.mountain_climb, () => {
+      this._showDialogueSequence(getQuestDialogue('mystery_q1', 'climb'), () => {
         this.ui.notify('Received Silent Stone!');
         this._refreshUI();
       });
@@ -1193,7 +1193,9 @@ export class Game {
   _showDialogueSequence(lines, callback) {
     this.mode = 'dialogue';
     this.player.clearKeys();
-    this.dialogueQueue = [...lines];
+    // Guard: a missing or malformed quest dialogue becomes an immediate
+    // no-op that still fires its callback, so handlers don't crash mid-flow.
+    this.dialogueQueue = Array.isArray(lines) ? [...lines] : [];
     this.dialogueCallback = callback || null;
     this._showNextDialogue();
   }
