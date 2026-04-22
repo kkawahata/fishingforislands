@@ -173,7 +173,9 @@ export const ISLAND_SPACING = 8;
 const DOCK_LENGTH = 4;
 const DOCK_WIDTH = 1.2;
 const DOCK_OVERLAP = 1; // how far the plank extends inside home
-const TURTLE_OFFSET_FROM_DOCK = 3; // gap between dock west end and turtle body center
+export const TURTLE_SCALE = 4;
+const TURTLE_HEAD_LOCAL_X = 2.2; // head offset within the unscaled group
+const TURTLE_HEAD_DOCK_GAP = 1;  // head center sits this far west of dock tip
 
 export function getIslandWorldPos(islandId) {
   const g = ISLAND_GRID[islandId];
@@ -201,11 +203,12 @@ export function getTurtleBridgeBand() {
   };
 }
 
-// Where the turtle's body sits in the water, west of the dock.
+// Where the turtle's body sits in the water, west of the dock. The body
+// is positioned so the (scaled) head lands just off the dock tip.
 export function getTurtleBodyPos() {
   const band = getTurtleBridgeBand();
   return {
-    x: band.minX - TURTLE_OFFSET_FROM_DOCK,
+    x: band.minX - TURTLE_HEAD_DOCK_GAP - TURTLE_HEAD_LOCAL_X * TURTLE_SCALE,
     y: 0.3,
     z: (band.minZ + band.maxZ) / 2,
   };

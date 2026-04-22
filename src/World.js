@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
-import { ISLANDS, ISLAND_GRID, ISLAND_SPACING, getIslandWorldPos, getTurtleBridgeBand, getTurtleBodyPos, RESOURCES } from './data.js';
+import { ISLANDS, ISLAND_GRID, ISLAND_SPACING, getIslandWorldPos, getTurtleBridgeBand, getTurtleBodyPos, TURTLE_SCALE, RESOURCES } from './data.js';
 
 const TILE = 1;
 
@@ -366,6 +366,7 @@ export class World {
     const pos = getTurtleBodyPos();
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
+    group.scale.setScalar(TURTLE_SCALE);
 
     const bodyGeo = new THREE.SphereGeometry(2.0, 8, 6);
     bodyGeo.scale(1.4, 0.5, 1);
@@ -1133,11 +1134,13 @@ export class World {
       });
     }
 
-    // Gentle turtle bob on the water
+    // Gentle turtle bob on the water. Vertical amplitude scales with
+    // the turtle so the motion stays perceptually proportional; the
+    // rotation stays small in angle but looks bigger at scale.
     for (const group of this.turtleMeshes) {
       if (!group.userData.isTurtle) continue;
       const baseY = getTurtleBodyPos().y;
-      group.position.y = baseY + Math.sin(time * 0.8) * 0.06;
+      group.position.y = baseY + Math.sin(time * 0.8) * 0.06 * TURTLE_SCALE;
       group.rotation.z = Math.sin(time * 0.5) * 0.03;
     }
   }
