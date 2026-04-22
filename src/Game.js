@@ -21,7 +21,7 @@ export class Game {
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 15000);
-    this.camera.position.set(14, 18, 42);
+    this.camera.position.set(8, 18, 30);
 
     // Game systems — try to load saved game
     const savedState = GameState.loadFromStorage();

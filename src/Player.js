@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ISLAND_GRID, ISLANDS } from './data.js';
+import { ISLAND_GRID, ISLANDS, getIslandWorldPos, getTurtleBridgeBand } from './data.js';
 
 const MOVE_SPEED = 5;
 const MAX_DT = 0.05;
@@ -93,9 +93,8 @@ export class Player {
   }
 
   _getIslandCenter(islandId) {
-    const g = ISLAND_GRID[islandId];
-    if (!g) return new THREE.Vector3(14, 0, 28);
-    return new THREE.Vector3(g.col * 14, 0, g.row * 14);
+    const p = getIslandWorldPos(islandId in ISLAND_GRID ? islandId : 'home');
+    return new THREE.Vector3(p.x, p.y, p.z);
   }
 
   _setupInput() {
@@ -188,14 +187,11 @@ export class Player {
     for (const islandId of gameState.unlockedIslands) {
       const def = ISLANDS[islandId];
       if (!def) continue;
-      const g = ISLAND_GRID[islandId];
-      if (!g) continue;
-      const cx = g.col * 14;
-      const cz = g.row * 14;
-      const dist = Math.hypot(this.mesh.position.x - cx, this.mesh.position.z - cz);
+      const p = getIslandWorldPos(islandId);
+      const dist = Math.hypot(this.mesh.position.x - p.x, this.mesh.position.z - p.z);
       if (dist < bestDist) {
         bestDist = dist;
-        bestPos = new THREE.Vector3(cx, GROUND_Y, cz);
+        bestPos = new THREE.Vector3(p.x, GROUND_Y, p.z);
       }
     }
     if (bestPos) this.mesh.position.copy(bestPos);
@@ -239,37 +235,19 @@ export class Player {
     for (const islandId of gameState.unlockedIslands) {
       const def = ISLANDS[islandId];
       if (!def) continue;
-      const g = ISLAND_GRID[islandId];
-      if (!g) continue;
-      const cx = g.col * 14;
-      const cz = g.row * 14;
+      const p = getIslandWorldPos(islandId);
       const half = def.size / 2 + 0.2;
-      if (pos.x >= cx - half && pos.x <= cx + half &&
-          pos.z >= cz - half && pos.z <= cz + half) {
+      if (pos.x >= p.x - half && pos.x <= p.x + half &&
+          pos.z >= p.z - half && pos.z <= p.z + half) {
         return true;
       }
     }
 
-    const unlocked = Array.from(gameState.unlockedIslands);
-    for (let i = 0; i < unlocked.length; i++) {
-      for (let j = i + 1; j < unlocked.length; j++) {
-        const a = ISLAND_GRID[unlocked[i]];
-        const b = ISLAND_GRID[unlocked[j]];
-        if (!a || !b) continue;
-        const dx = Math.abs(a.col - b.col);
-        const dz = Math.abs(a.row - b.row);
-        if (dx + dz !== 1) continue;
-        const ax = a.col * 14, az = a.row * 14;
-        const bx = b.col * 14, bz = b.row * 14;
-        const midX = (ax + bx) / 2, midZ = (az + bz) / 2;
-        if (dx === 1) {
-          if (pos.x >= midX - 7 && pos.x <= midX + 7 &&
-              pos.z >= midZ - 0.8 && pos.z <= midZ + 0.8) return true;
-        } else {
-          if (pos.z >= midZ - 7 && pos.z <= midZ + 7 &&
-              pos.x >= midX - 0.8 && pos.x <= midX + 0.8) return true;
-        }
-      }
+    // Turtle bridge: the only remaining bridge, connecting turtle to home
+    if (gameState.unlockedIslands.has('turtle') && gameState.unlockedIslands.has('home')) {
+      const band = getTurtleBridgeBand();
+      if (pos.x >= band.minX && pos.x <= band.maxX &&
+          pos.z >= band.minZ && pos.z <= band.maxZ) return true;
     }
     return false;
   }
@@ -278,13 +256,10 @@ export class Player {
     for (const islandId of gameState.unlockedIslands) {
       const def = ISLANDS[islandId];
       if (!def) continue;
-      const g = ISLAND_GRID[islandId];
-      if (!g) continue;
-      const cx = g.col * 14;
-      const cz = g.row * 14;
+      const p = getIslandWorldPos(islandId);
       const half = def.size / 2;
-      if (this.mesh.position.x >= cx - half && this.mesh.position.x <= cx + half &&
-          this.mesh.position.z >= cz - half && this.mesh.position.z <= cz + half) {
+      if (this.mesh.position.x >= p.x - half && this.mesh.position.x <= p.x + half &&
+          this.mesh.position.z >= p.z - half && this.mesh.position.z <= p.z + half) {
         this.currentIsland = islandId;
         return;
       }

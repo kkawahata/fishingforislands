@@ -164,8 +164,47 @@ export const RECIPES = [
 ];
 
 // ── Island grid positions (col, row) from the spec flowchart ──
+// Grid cells are ISLAND_SPACING world units wide. Non-turtle islands are
+// size=8 so they share edges; turtle is size=12 and sits off-grid with a
+// water gap, spanned by a bridge to home.
+export const ISLAND_SPACING = 8;
+
+export function getIslandWorldPos(islandId) {
+  const g = ISLAND_GRID[islandId];
+  if (!g) return { x: 0, y: 0, z: 0 };
+  return {
+    x: g.col * ISLAND_SPACING + (g.xOffset || 0),
+    y: 0,
+    z: g.row * ISLAND_SPACING + (g.zOffset || 0),
+  };
+}
+
+// Axis-aligned box covering the turtle→home bridge (with a small overlap
+// into each island for a seamless walk-on). Shared between World rendering
+// and Player walkability so they can't drift.
+export function getTurtleBridgeBand() {
+  const t = getIslandWorldPos('turtle');
+  const h = getIslandWorldPos('home');
+  const tSize = ISLANDS.turtle.size;
+  const hSize = ISLANDS.home.size;
+  const overlap = 1;
+  const halfWidth = 0.6; // matches visual bridge plank width (1.2)
+  if (t.z === h.z) {
+    // Horizontal (east/west) bridge
+    const [minX, maxX] = t.x < h.x
+      ? [t.x + tSize / 2 - overlap, h.x - hSize / 2 + overlap]
+      : [h.x + hSize / 2 - overlap, t.x - tSize / 2 + overlap];
+    return { minX, maxX, minZ: t.z - halfWidth, maxZ: t.z + halfWidth };
+  }
+  // Vertical (north/south) bridge
+  const [minZ, maxZ] = t.z < h.z
+    ? [t.z + tSize / 2 - overlap, h.z - hSize / 2 + overlap]
+    : [h.z + hSize / 2 - overlap, t.z - tSize / 2 + overlap];
+  return { minX: t.x - halfWidth, maxX: t.x + halfWidth, minZ, maxZ };
+}
+
 export const ISLAND_GRID = {
-  turtle:        { col: 0, row: 2 },
+  turtle:        { col: 0, row: 2, xOffset: -8 },
   home:          { col: 1, row: 2 },
   wheat_farm:    { col: 2, row: 2 },
   fishing_pier:  { col: 1, row: 3 },
@@ -188,7 +227,7 @@ export const ISLANDS = {
     id: 'turtle',
     name: 'Talk to Turtle',
     tier: 1,
-    size: 6,
+    size: 12,
     groundColor: 0x5a9a4a,
     isTurtleIsland: true,
     objects: [],
@@ -292,7 +331,7 @@ export const ISLANDS = {
     id: 'dense_forest',
     name: 'Dense Forest',
     tier: 2,
-    size: 10,
+    size: 8,
     groundColor: 0x3a6a2a,
     objects: [
       { id: 'logging_camp', name: 'Logging Camp', x: 2, z: 2, color: 0x6b4226, shape: 'logging_camp', interaction: 'crafting', station: 'logging_camp' },
@@ -347,7 +386,7 @@ export const ISLANDS = {
     id: 'market_square',
     name: 'Market Square',
     tier: 2,
-    size: 9,
+    size: 8,
     groundColor: 0xc8b080,
     objects: [
       { id: 'market_stall', name: 'Market Stall', x: 4, z: 3, color: 0xaa4444, shape: 'stall' },
@@ -424,7 +463,7 @@ export const ISLANDS = {
     id: 'mount_mystery',
     name: 'Mount Mystery',
     tier: 2,
-    size: 10,
+    size: 8,
     groundColor: 0x8888aa,
     objects: [
       { id: 'mountain_peak', name: 'Mountain Peak', x: 5, z: 3, color: 0x999999, shape: 'mountain', interaction: 'mountain' },

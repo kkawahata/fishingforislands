@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
-import { ISLANDS, ISLAND_GRID, RESOURCES } from './data.js';
+import { ISLANDS, ISLAND_GRID, ISLAND_SPACING, getIslandWorldPos, getTurtleBridgeBand, RESOURCES } from './data.js';
 
-const ISLAND_SPACING = 14;
 const TILE = 1;
 
 // ── Water shader ──
@@ -53,7 +52,7 @@ varying vec3 vNormal;
 
 void main() {
   // Depth-based color (distance from center of island cluster)
-  float dist = length(vWorldPos.xz - vec2(28.0, 28.0));
+  float dist = length(vWorldPos.xz - vec2(16.0, 16.0));
   float depthMix = smoothstep(5.0, 50.0, dist);
   vec3 color = mix(uColorShallow, uColorDeep, depthMix);
 
@@ -210,7 +209,7 @@ export class World {
     });
 
     this.clouds = new THREE.Mesh(geo, mat);
-    this.clouds.position.set(28, 25, 28); // high above the island grid center
+    this.clouds.position.set(16, 25, 16); // high above the island grid center
     this.scene.add(this.clouds);
   }
 
@@ -239,18 +238,9 @@ export class World {
   }
 
   // ── Grid → World position ──
-  gridToWorld(col, row) {
-    return new THREE.Vector3(
-      col * ISLAND_SPACING,
-      0,
-      row * ISLAND_SPACING
-    );
-  }
-
   getIslandWorldPos(islandId) {
-    const g = ISLAND_GRID[islandId];
-    if (!g) return new THREE.Vector3();
-    return this.gridToWorld(g.col, g.row);
+    const p = getIslandWorldPos(islandId);
+    return new THREE.Vector3(p.x, p.y, p.z);
   }
 
   // ── Build / rebuild visible islands ──
@@ -308,15 +298,15 @@ export class World {
     group.add(platform);
     this.groundMeshes.push(platform);
 
-    // Sandy beach rim
-    const beachGeo = new THREE.BoxGeometry(size + 0.4, 0.3, size + 0.4);
-    const beachMat = new THREE.MeshLambertMaterial({ color: 0xe8d78a, flatShading: true });
-    const beach = new THREE.Mesh(beachGeo, beachMat);
-    beach.position.y = -0.6;
-    group.add(beach);
-
-    // Turtle island special rendering
+    // Sandy beach rim — only on turtle, which still floats offshore.
+    // Non-turtle islands share edges with neighbors, so a sand rim between
+    // two land biomes would look wrong.
     if (def.isTurtleIsland) {
+      const beachGeo = new THREE.BoxGeometry(size + 0.4, 0.3, size + 0.4);
+      const beachMat = new THREE.MeshLambertMaterial({ color: 0xe8d78a, flatShading: true });
+      const beach = new THREE.Mesh(beachGeo, beachMat);
+      beach.position.y = -0.6;
+      group.add(beach);
       this._addTurtleIsland(group, def);
       return group;
     }
@@ -1052,59 +1042,48 @@ export class World {
   }
 
   // ── Bridges ──
+  // Islands of size 8 share edges on the uniform grid, so no bridges are
+  // needed between them. The turtle is the exception: it floats offshore
+  // and is reached by a bridge from home.
   _buildBridges(gameState) {
-    const unlocked = Array.from(gameState.unlockedIslands);
-    for (let i = 0; i < unlocked.length; i++) {
-      for (let j = i + 1; j < unlocked.length; j++) {
-        const a = ISLAND_GRID[unlocked[i]];
-        const b = ISLAND_GRID[unlocked[j]];
-        if (!a || !b) continue;
-        const dx = Math.abs(a.col - b.col);
-        const dz = Math.abs(a.row - b.row);
-        if ((dx === 1 && dz === 0) || (dx === 0 && dz === 1)) {
-          this._addBridge(unlocked[i], unlocked[j]);
-        }
-      }
+    if (gameState.unlockedIslands.has('turtle') && gameState.unlockedIslands.has('home')) {
+      this._addBridge();
     }
   }
 
-  _addBridge(idA, idB) {
-    const posA = this.getIslandWorldPos(idA);
-    const posB = this.getIslandWorldPos(idB);
-    const mid = posA.clone().add(posB).multiplyScalar(0.5);
-    const dir = posB.clone().sub(posA);
-    const length = dir.length();
-    const sizeA = ISLANDS[idA]?.size || 8;
-    const sizeB = ISLANDS[idB]?.size || 8;
-    const bridgeLength = length - (sizeA + sizeB) / 2 + 1;
+  _addBridge() {
+    // Only the turtle bridge exists now. Build its geometry from the same
+    // band Player uses for walkability so visuals and collision stay aligned.
+    const band = getTurtleBridgeBand();
+    const width = band.maxX - band.minX;
+    const depth = band.maxZ - band.minZ;
+    const midX = (band.minX + band.maxX) / 2;
+    const midZ = (band.minZ + band.maxZ) / 2;
+    const isHorizontal = width > depth;
 
-    const geo = new THREE.BoxGeometry(
-      dir.x !== 0 ? bridgeLength : 1.2,
-      0.15,
-      dir.z !== 0 ? bridgeLength : 1.2
-    );
+    const geo = new THREE.BoxGeometry(width, 0.15, depth);
     const mat = new THREE.MeshLambertMaterial({ color: 0x8b7d5a, flatShading: true });
     const bridge = new THREE.Mesh(geo, mat);
-    bridge.position.copy(mid);
-    bridge.position.y = 0.35;
+    bridge.position.set(midX, 0.35, midZ);
     bridge.userData.isGround = true;
     this.scene.add(bridge);
     this.groundMeshes.push(bridge);
     this.bridges.push(bridge);
 
-    // Rails
+    // Rails along both long edges
     for (const offset of [-0.5, 0.5]) {
       const railGeo = new THREE.BoxGeometry(
-        dir.x !== 0 ? bridgeLength : 0.08,
+        isHorizontal ? width : 0.08,
         0.25,
-        dir.z !== 0 ? bridgeLength : 0.08
+        isHorizontal ? 0.08 : depth
       );
       const railMat = new THREE.MeshLambertMaterial({ color: 0x6b5d3a, flatShading: true });
       const rail = new THREE.Mesh(railGeo, railMat);
-      rail.position.copy(mid);
-      rail.position.y = 0.5;
-      if (dir.x !== 0) rail.position.z += offset;
-      else rail.position.x += offset;
+      rail.position.set(
+        midX + (isHorizontal ? 0 : offset),
+        0.5,
+        midZ + (isHorizontal ? offset : 0),
+      );
       this.scene.add(rail);
       this.bridges.push(rail);
     }
