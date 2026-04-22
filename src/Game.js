@@ -4,7 +4,7 @@ import { GameState } from './GameState.js';
 import { World } from './World.js';
 import { Player } from './Player.js';
 import { UI } from './UI.js';
-import { DIALOGUES, RESOURCES, ISLANDS, ISLAND_GRID, ALL_FISH_IDS, ISLAND_UNLOCK_RULES } from './data.js';
+import { DIALOGUES, RESOURCES, ISLANDS, ISLAND_GRID, ALL_FISH_IDS, ISLAND_UNLOCK_RULES, MAX_FISH_PER_DAY } from './data.js';
 
 export class Game {
   constructor() {
@@ -54,9 +54,13 @@ export class Game {
     this.controls.target.copy(this.player.mesh.position);
 
     // Game mode
-    this.mode = 'playing'; // playing | dialogue | crafting | turtle | transition
+    this.mode = 'playing'; // playing | dialogue | crafting | turtle | transition | action
     this.dialogueQueue = [];
     this.dialogueCallback = null;
+
+    // Active timed action (fishing, crafting, etc.) — null when none
+    this._activeAction = null;
+    this._actionProjVec = new THREE.Vector3();
 
     // Turtle scene
     this.turtleRenderer = null;
@@ -243,6 +247,45 @@ export class Game {
     });
   }
 
+  // ── Timed Actions ──
+  // Shared progress-bar primitive. Farming-style actions (fishing, crafting,
+  // drawing water…) route their effect through here so the player sees a
+  // visible bar tick during the 1–2s it takes the action to "complete."
+  _startAction({ targetMesh, duration, label, onComplete }) {
+    this.mode = 'action';
+    this.player.clearKeys();
+    this.player.enabled = false;
+    this.player.cancelClickToMove();
+    this._activeAction = { targetMesh, duration, elapsed: 0, label, onComplete };
+    this.ui.showActionBar(label);
+  }
+
+  _updateAction(dt) {
+    const a = this._activeAction;
+    if (!a) return;
+    a.elapsed += dt;
+    const progress = a.elapsed / a.duration;
+
+    // Project the target mesh position to screen coords for bar placement.
+    a.targetMesh.getWorldPosition(this._actionProjVec);
+    this._actionProjVec.y += 1.2; // float the bar above the object
+    this._actionProjVec.project(this.camera);
+    const screenX = (this._actionProjVec.x * 0.5 + 0.5) * window.innerWidth;
+    const screenY = (-this._actionProjVec.y * 0.5 + 0.5) * window.innerHeight;
+    this.ui.updateActionBar(progress, screenX, screenY);
+
+    if (a.elapsed >= a.duration) this._finishAction();
+  }
+
+  _finishAction() {
+    const a = this._activeAction;
+    this._activeAction = null;
+    this.ui.hideActionBar();
+    this.player.enabled = true;
+    this.mode = 'playing';
+    if (a && a.onComplete) a.onComplete();
+  }
+
   // ── Interaction ──
   _tryInteract() {
     const playerPos = this.player.getWorldPosition();
@@ -295,49 +338,64 @@ export class Game {
   }
 
   _handlePickup(mesh, data) {
-    if (data.resource) {
-      const resDef = RESOURCES[data.resource];
-      this.state.addItem(data.resource, 1);
-      this.ui.notify(`Collected ${resDef?.name || data.resource}!`);
-      this.world.removeInteractable(mesh);
-
-      if (data.resource === 'axe') {
-        this.state.flags.picked_axe = true;
-      }
-
-      this._refreshUI();
-    }
+    if (!data.resource) return;
+    const resDef = RESOURCES[data.resource];
+    const name = resDef?.name || data.resource;
+    this._startAction({
+      targetMesh: mesh,
+      duration: 0.8,
+      label: `Collecting ${name}`,
+      onComplete: () => {
+        this.state.addItem(data.resource, 1);
+        this.ui.notify(`Collected ${name}!`);
+        this.world.removeInteractable(mesh);
+        if (data.resource === 'axe') this.state.flags.picked_axe = true;
+        this._refreshUI();
+      },
+    });
   }
 
-  _handleWell() {
-    if (!this.state.hasItem('water')) {
-      this.state.addItem('water', 1);
-      this.ui.notify('Filled a bucket of water!');
-    } else {
+  _handleWell(mesh) {
+    if (this.state.hasItem('water')) {
       this.ui.notify('You already have a bucket of water.');
+      return;
     }
-    this._refreshUI();
+    this._startAction({
+      targetMesh: mesh,
+      duration: 1.5,
+      label: 'Drawing water',
+      onComplete: () => {
+        this.state.addItem('water', 1);
+        this.ui.notify('Filled a bucket of water!');
+        this._refreshUI();
+      },
+    });
   }
 
-  _handleFirePit() {
+  _handleFirePit(mesh) {
     // Not yet lit: try to light it
     if (!this.state.flags.fire_lit) {
-      if (this.state.hasItem('sticks', 2) && this.state.hasItem('driftwood', 2)) {
-        this.state.removeItem('sticks', 2);
-        this.state.removeItem('driftwood', 2);
-        this.state.flags.fire_lit = true;
-        this.world.buildIslands(this.state);
-        this.world.spawnDailyResources(this.state);
-        this._showDialogueSequence(DIALOGUES.fire_lit, () => {
-          this._refreshUI();
-        });
-      } else {
+      if (!(this.state.hasItem('sticks', 2) && this.state.hasItem('driftwood', 2))) {
         const need = [];
         if (!this.state.hasItem('sticks', 2)) need.push('2 Sticks');
         if (!this.state.hasItem('driftwood', 2)) need.push('2 Driftwood');
         this.ui.notify(`Need ${need.join(' and ')} to light the fire.`);
+        return;
       }
-      this._refreshUI();
+      this._startAction({
+        targetMesh: mesh,
+        duration: 2.5,
+        label: 'Lighting fire',
+        onComplete: () => {
+          this.state.removeItem('sticks', 2);
+          this.state.removeItem('driftwood', 2);
+          this.state.flags.fire_lit = true;
+          this.world.buildIslands(this.state);
+          this.world.spawnDailyResources(this.state);
+          this._showDialogueSequence(DIALOGUES.fire_lit, () => this._refreshUI());
+          this._refreshUI();
+        },
+      });
       return;
     }
 
@@ -357,29 +415,37 @@ export class Game {
     this.ui.notify('The fire crackles warmly.');
   }
 
-  _handleCraftStation(data) {
+  _handleCraftStation(mesh, data) {
     const station = this.state.flags.has_crafting_table ? 'crafting_table' : (data.station || 'big_rock');
     this.mode = 'crafting';
     this.player.clearKeys();
     const onCraft = (recipe) => {
-      if (this.state.craft(recipe)) {
-        this.ui.notify(`Crafted ${recipe.name}!`);
+      if (!this.state.canCraft(recipe)) return;
+      this.ui.hideCrafting();
+      this._startAction({
+        targetMesh: mesh,
+        duration: 1.5,
+        label: `Crafting ${recipe.name}`,
+        onComplete: () => {
+          this.state.craft(recipe);
+          this.ui.notify(`Crafted ${recipe.name}!`);
 
-        if (recipe.id === 'sticks_from_driftwood') {
-          this.state.flags.made_sticks = true;
-          this.state.removeItem('axe');
-          this.ui.notify('The axe broke on the rock!');
-        }
+          if (recipe.id === 'sticks_from_driftwood') {
+            this.state.flags.made_sticks = true;
+            this.state.removeItem('axe');
+            this.ui.notify('The axe broke on the rock!');
+          }
 
-        if (recipe.id === 'crafting_table') {
-          this.world.buildIslands(this.state);
-          this.world.spawnDailyResources(this.state);
-        }
+          if (recipe.id === 'crafting_table') {
+            this.world.buildIslands(this.state);
+            this.world.spawnDailyResources(this.state);
+          }
 
-        this._refreshUI();
-        // Refresh crafting menu with updated state
-        this.ui.showCrafting(this.state, station, onCraft);
-      }
+          this._refreshUI();
+          // Reopen menu so the player can keep crafting
+          this._handleCraftStation(mesh, data);
+        },
+      });
     };
     this.ui.showCrafting(this.state, station, onCraft);
   }
@@ -543,83 +609,113 @@ export class Game {
     ]);
   }
 
-  _handleWheatField() {
+  _handleWheatField(mesh) {
     if (!this.state.hasItem('shovel')) {
       this.ui.notify("You need a shovel to dig here.");
       return;
     }
 
     if (!this.state.flags.found_seeds) {
-      this.state.flags.found_seeds = true;
-      this.state.addItem('seeds', 10);
-      this.state.addItem('sticks', 5);
-      this.ui.notify('Dug up a Bag of 10 Seeds and 5 Sticks!');
-      this._refreshUI();
+      this._startAction({
+        targetMesh: mesh,
+        duration: 2,
+        label: 'Digging',
+        onComplete: () => {
+          this.state.flags.found_seeds = true;
+          this.state.addItem('seeds', 10);
+          this.state.addItem('sticks', 5);
+          this.ui.notify('Dug up a Bag of 10 Seeds and 5 Sticks!');
+          this._refreshUI();
+        },
+      });
       return;
     }
 
     if (this.state.flags.found_seeds && !this.state.flags.planted_seeds && this.state.hasItem('seeds') && this.state.hasItem('water')) {
-      const seedCount = this.state.getItemCount('seeds');
-      this.state.removeItem('seeds', seedCount);
-      this.state.removeItem('water', 1);
-      this.state.flags.planted_seeds = true;
-      this.state.flags.wheat_planted_day = this.state.day;
-
-      this.ui.notify(`Planted ${seedCount} seeds and watered them!`);
-
-      // Rebuild to show planted wheat
-      this.world.buildIslands(this.state);
-      this.world.spawnDailyResources(this.state);
-      this._refreshUI();
+      this._startAction({
+        targetMesh: mesh,
+        duration: 2,
+        label: 'Planting seeds',
+        onComplete: () => {
+          const seedCount = this.state.getItemCount('seeds');
+          this.state.removeItem('seeds', seedCount);
+          this.state.removeItem('water', 1);
+          this.state.flags.planted_seeds = true;
+          this.state.flags.wheat_planted_day = this.state.day;
+          this.ui.notify(`Planted ${seedCount} seeds and watered them!`);
+          this.world.buildIslands(this.state);
+          this.world.spawnDailyResources(this.state);
+          this._refreshUI();
+        },
+      });
       return;
     }
 
     if (this.state.flags.planted_seeds) {
       const daysSince = this.state.day - this.state.flags.wheat_planted_day;
-      if (daysSince >= 3) {
-        // Spec: 1 Wheat per harvest, 2-3 Seeds per Wheat
-        const seedsPerPlant = Math.floor(Math.random() * 2) + 2; // 2-3
-        this.state.addItem('wheat', 1);
-        this.state.addItem('seeds', seedsPerPlant);
-        this.state.flags.first_harvest_done = true;
-        if (!this.state.flags._first_harvest_shown) {
-          this.state.flags._first_harvest_shown = true;
-          this._showDialogueSequence(DIALOGUES.wheat_harvest);
-        }
-        this.ui.notify(`Harvested 1 Wheat and ${seedsPerPlant} Seeds!`);
-        this.state.flags.wheat_planted_day = this.state.day;
-        this.world.buildIslands(this.state);
-        this.world.spawnDailyResources(this.state);
-      } else {
+      if (daysSince < 3) {
         const stages = ['Planted', 'Sprouting', 'Growing', 'Flowering'];
         this.ui.notify(`Wheat is ${stages[daysSince]}... ${3 - daysSince} day(s) until harvest.`);
+        this._refreshUI();
+        return;
       }
-      this._refreshUI();
+      this._startAction({
+        targetMesh: mesh,
+        duration: 2,
+        label: 'Harvesting wheat',
+        onComplete: () => {
+          // Spec: 1 Wheat per harvest, 2-3 Seeds per Wheat
+          const seedsPerPlant = Math.floor(Math.random() * 2) + 2;
+          this.state.addItem('wheat', 1);
+          this.state.addItem('seeds', seedsPerPlant);
+          this.state.flags.first_harvest_done = true;
+          if (!this.state.flags._first_harvest_shown) {
+            this.state.flags._first_harvest_shown = true;
+            this._showDialogueSequence(DIALOGUES.wheat_harvest);
+          }
+          this.ui.notify(`Harvested 1 Wheat and ${seedsPerPlant} Seeds!`);
+          this.state.flags.wheat_planted_day = this.state.day;
+          this.world.buildIslands(this.state);
+          this.world.spawnDailyResources(this.state);
+          this._refreshUI();
+        },
+      });
     }
   }
 
-  _handlePier() {
-    if (this.state.hasItem('fishing_rod')) {
-      const caught = this.state.catchFish();
-      if (!caught) {
-        this.ui.notify("No more fish today. Try again tomorrow! (max 10/day)");
-        return;
-      }
-      const name = RESOURCES[caught]?.name || caught;
-      this.ui.notify(`Caught a ${name} from the pier!`);
-
-      if (this.state.totalFishCollected() >= 5 && !this.state.flags.shared_meal) {
-        this.state.flags.shared_meal = true;
-        this._showDialogueSequence([
-          { speaker: 'Maria', text: "That's enough for a feast! Let me cook these up." },
-          { speaker: '', text: "*Everyone gathers for a warm meal.*" },
-        ], () => this._refreshUI());
-        return;
-      }
-      this._refreshUI();
-    } else {
+  _handlePier(mesh) {
+    if (!this.state.hasItem('fishing_rod')) {
       this.ui.notify("You need a fishing rod to fish here. Talk to Maria and the Old Man.");
+      return;
     }
+    if (this.state.fishCaughtToday >= MAX_FISH_PER_DAY) {
+      this.ui.notify(`No more fish today. Try again tomorrow! (max ${MAX_FISH_PER_DAY}/day)`);
+      return;
+    }
+    this._startAction({
+      targetMesh: mesh,
+      duration: 2.5,
+      label: 'Fishing',
+      onComplete: () => {
+        const caught = this.state.catchFish();
+        if (!caught) {
+          this.ui.notify("No more fish today. Try again tomorrow! (max 10/day)");
+          return;
+        }
+        const name = RESOURCES[caught]?.name || caught;
+        this.ui.notify(`Caught a ${name} from the pier!`);
+
+        if (this.state.totalFishCollected() >= 5 && !this.state.flags.shared_meal) {
+          this.state.flags.shared_meal = true;
+          this._showDialogueSequence([
+            { speaker: 'Maria', text: "That's enough for a feast! Let me cook these up." },
+            { speaker: '', text: "*Everyone gathers for a warm meal.*" },
+          ], () => this._refreshUI());
+          return;
+        }
+        this._refreshUI();
+      },
+    });
   }
 
   // ── Tier 2 handlers ──
@@ -1080,10 +1176,17 @@ export class Game {
       this.ui.notify("This sheep has already been shorn today.");
       return;
     }
-    this.state.flags.sheep_shorn.add(sheepId);
-    this.state.addItem('wool', 1);
-    this.ui.notify('Harvested 1 Wool!');
-    this._refreshUI();
+    this._startAction({
+      targetMesh: mesh,
+      duration: 1.5,
+      label: `Shearing ${mesh.userData.name || 'Sheep'}`,
+      onComplete: () => {
+        this.state.flags.sheep_shorn.add(sheepId);
+        this.state.addItem('wool', 1);
+        this.ui.notify('Harvested 1 Wool!');
+        this._refreshUI();
+      },
+    });
   }
 
   // ── Dialogue System ──
@@ -1118,7 +1221,7 @@ export class Game {
     const playerPos = this.player.getWorldPosition();
     const nearest = this.world.getNearbyInteractable(playerPos, 2.5);
     if (nearest && (nearest.userData.interaction === 'crafting' || nearest.userData.station)) {
-      this._handleCraftStation(nearest.userData);
+      this._handleCraftStation(nearest, nearest.userData);
     } else {
       this.ui.notify('No crafting station nearby.');
     }
@@ -1336,6 +1439,11 @@ export class Game {
         }
         this._pendingInteraction = null;
       }
+    } else if (this.mode === 'action') {
+      this._updateAction(dt);
+      this.ui.hideTooltip();
+      this.world.hideHighlightRing();
+      this.renderer.domElement.style.cursor = 'default';
     } else {
       this.player.clearKeys();
       this.ui.hideTooltip();
@@ -1396,16 +1504,16 @@ export class Game {
 
     switch (data.interaction) {
       case 'pickup': this._handlePickup(mesh, data); break;
-      case 'well': this._handleWell(); break;
-      case 'fire_pit': this._handleFirePit(); break;
-      case 'crafting': this._handleCraftStation(data); break;
+      case 'well': this._handleWell(mesh); break;
+      case 'fire_pit': this._handleFirePit(mesh); break;
+      case 'crafting': this._handleCraftStation(mesh, data); break;
       case 'turtle': this._handleTurtle(); break;
       case 'dog': this._handleDog(); break;
       case 'sally': this._handleSally(); break;
       case 'maria': this._handleMaria(); break;
       case 'old_man': this._handleOldMan(); break;
-      case 'wheat_field': this._handleWheatField(); break;
-      case 'pier': this._handlePier(); break;
+      case 'wheat_field': this._handleWheatField(mesh); break;
+      case 'pier': this._handlePier(mesh); break;
       case 'pierre': this._handlePierre(); break;
       case 'mouse': this._handleMouse(); break;
       case 'ashley': this._handleAshley(); break;

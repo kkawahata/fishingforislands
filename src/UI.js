@@ -21,6 +21,11 @@ export class UI {
     this.dayTransitionText = document.getElementById('day-transition-text');
     this.dayTransitionSub = document.getElementById('day-transition-sub');
 
+    // Action bar (shared progress bar for farming actions)
+    this.actionBar = document.getElementById('action-bar');
+    this.actionBarLabel = this.actionBar.querySelector('.label');
+    this.actionBarFill = this.actionBar.querySelector('.fill');
+
     // Turtle scene
     this.turtleScene = document.getElementById('turtle-scene');
     this.turtleText = document.getElementById('turtle-text');
@@ -244,6 +249,26 @@ export class UI {
 
   isDialogueOpen() {
     return this.dialogueBox.style.display !== 'none';
+  }
+
+  // ── Action Bar ──
+  // Callers drive this each frame: call showActionBar when an action starts,
+  // updateActionBar(progress 0..1, screenX, screenY) each frame, hideActionBar
+  // when it finishes or cancels.
+  showActionBar(label) {
+    this.actionBarLabel.textContent = label;
+    this.actionBarFill.style.width = '0%';
+    this.actionBar.style.display = 'block';
+  }
+
+  updateActionBar(progress, screenX, screenY) {
+    this.actionBarFill.style.width = `${Math.max(0, Math.min(1, progress)) * 100}%`;
+    this.actionBar.style.left = `${screenX}px`;
+    this.actionBar.style.top = `${screenY}px`;
+  }
+
+  hideActionBar() {
+    this.actionBar.style.display = 'none';
   }
 
   // ── Tooltip ──
