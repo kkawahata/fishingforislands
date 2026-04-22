@@ -3,6 +3,8 @@
 // an editable model (checks stored as source strings, not live functions),
 // and exports a new JS/JSON representation on demand.
 
+import { saveOverride, clearOverride, hasOverride } from '../questsOverride.js';
+
 export class QuestEditor {
   constructor({ quests, islands, resources, dialogues }) {
     this.islands = islands;
@@ -42,9 +44,71 @@ export class QuestEditor {
     document.getElementById('admin-copy').addEventListener('click', () => this.copyJs());
     document.getElementById('admin-export-js').addEventListener('click', () => this.downloadJs());
     document.getElementById('admin-export-json').addEventListener('click', () => this.downloadJson());
+    document.getElementById('admin-apply').addEventListener('click', () => this.applyToGame());
+    document.getElementById('admin-clear-override').addEventListener('click', () => this.clearOverrideConfirm());
 
+    this.refreshOverrideStatus();
     this.renderList();
     this.renderDetail();
+  }
+
+  refreshOverrideStatus() {
+    const el = document.getElementById('admin-override-status');
+    if (!el) return;
+    if (hasOverride()) {
+      el.textContent = '● override active';
+      el.style.color = 'var(--accent)';
+    } else {
+      el.textContent = '○ no override';
+      el.style.color = 'var(--muted)';
+    }
+  }
+
+  applyToGame() {
+    try {
+      saveOverride(this.serializeForOverride());
+      this.dirty.clear();
+      this.refreshOverrideStatus();
+      this.renderList();
+      this.toast('Saved — reload the game tab to see changes');
+    } catch (err) {
+      console.error(err);
+      this.toast('Save failed: ' + err.message);
+    }
+  }
+
+  clearOverrideConfirm() {
+    if (!hasOverride()) {
+      this.toast('No override to clear');
+      return;
+    }
+    if (!window.confirm('Remove the localStorage override and revert the game to code-defined quests? (The editor will keep your in-memory edits.)')) return;
+    clearOverride();
+    this.refreshOverrideStatus();
+    this.toast('Override cleared — reload the game tab to see base quests');
+  }
+
+  // Shape mirrors the JSON export but preserves check sources as strings.
+  serializeForOverride() {
+    const out = {};
+    for (const id of this.order) {
+      const m = this.model[id];
+      out[id] = {
+        id: m.id,
+        name: m.name,
+        description: m.description,
+        islands: m.islands,
+        island: m.islands[0] || undefined,
+        requiresQuests: m.requiresQuests,
+        requiresDay: m.requiresDay ?? null,
+        completesDay: !!m.completesDay,
+        hidden: !!m.hidden,
+        rewards: { ...m.rewards },
+        dialogue: { ...m.dialogue },
+        steps: m.steps.map(s => ({ id: s.id, text: s.text, check: s.check })),
+      };
+    }
+    return out;
   }
 
   // ── List ──

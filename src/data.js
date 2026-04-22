@@ -1,3 +1,5 @@
+import { applyOverrideInPlace } from './questsOverride.js';
+
 // ── Resource definitions ──
 export const RESOURCES = {
   driftwood:  { name: 'Driftwood',  icon: '🪵', color: 0x8b6914 },
@@ -892,6 +894,10 @@ export const QUESTS = {
     requiresDay: 10,
   },
 };
+
+// If the Quest Editor has saved an override to localStorage, fold it in
+// now so every consumer that imports QUESTS sees the edited version.
+applyOverrideInPlace(QUESTS);
 
 // ── Island unlock rules (prerequisite system) ──
 export const ISLAND_UNLOCK_RULES = {

@@ -179,7 +179,10 @@
     <div class="spacer"></div>
     <button id="admin-new">+ New Quest</button>
     <button id="admin-delete">Delete</button>
-    <button id="admin-copy" class="primary">Copy JS</button>
+    <button id="admin-apply" class="primary" title="Save to localStorage so the game sees edits on next reload">Apply to Game</button>
+    <button id="admin-clear-override" title="Remove localStorage override; revert to code-defined quests">Clear Override</button>
+    <span id="admin-override-status" style="font-size:11px; color: var(--muted); margin-left: 4px;"></span>
+    <button id="admin-copy">Copy JS</button>
     <button id="admin-export-js">Export .js</button>
     <button id="admin-export-json">Export .json</button>
     <a href="./">← Back to Game</a>
